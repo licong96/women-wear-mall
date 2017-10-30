@@ -1,0 +1,1 @@
+export const SET_ROUTER_ANIM = 'SET_ROUTER_ANIM'

@@ -1,23 +1,46 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
-    <router-view/>
+    <!-- <the-header></the-header> -->
+    <div class="main">
+      <keep-alive>
+        <router-view></router-view>
+      </keep-alive>
+    </div>
+    <the-nav></the-nav>
+  </div>
   </div>
 </template>
 
 <script>
-export default {
-  name: 'app'
-}
+  // import TheHeader from '@/components/TheHeader'
+  import TheNav from '@/components/TheNav'
+
+  export default {
+    name: 'app',
+    props: {
+      // value: {
+      //   type: Array,
+      //   default: []
+      // }
+    },
+    data() {
+      return {}
+    },
+    created() {},
+    mounted() {},
+    computed: {},
+    methods: {},
+    watch: {},
+    components: {
+      // TheHeader,
+      TheNav
+    }
+  }
 </script>
 
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<style scoped lang="scss">
+  #app,
+  .main {
+    height: 100%;
+  }
 </style>
