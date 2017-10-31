@@ -13,6 +13,9 @@
   overflow: hidden;
 }
 /* 轮播图小点颜色 */
+.swiper-container {
+  position: static;
+}
 .swiper-pagination-bullet {
   background: $color-theme;
 }

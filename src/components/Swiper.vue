@@ -1,5 +1,6 @@
 <template lang="html">
-  <swiper :options="swiperOption" class="swiper">
+  <!-- 轮播图组件 -->
+  <swiper :options="swiperOption">
     <swiper-slide v-for="item in swiperData" :key="item.id">
       <a href="#" class="swiper-a">
         <img class="swiper-img" :src="item.src" alt="">
@@ -42,11 +43,6 @@
 
 <style scoped lang="scss">
   @import "../common/sass/variable";
-
-  .swiper {
-    overflow: hidden;
-    height: 4.8rem /* 180/37.5 */;
-  }
   .swiper-a {
     display: block;
     .swiper-img {

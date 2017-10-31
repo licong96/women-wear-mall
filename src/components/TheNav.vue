@@ -1,4 +1,5 @@
 <template>
+  <!-- 首页底部导航 -->
   <footer class="the-nav">
     <div class="footer _effect" :class="{'_effect-50': routerAnim}">
       <ul class="nav-box">

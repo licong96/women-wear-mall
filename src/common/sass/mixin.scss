@@ -1,4 +1,4 @@
-// 1px边框
+// 1px边框，上 100%，下 0%
 @mixin border-b-1px($cost){
   position: relative;
   &:after{
@@ -7,13 +7,38 @@
     position: absolute;
     left: 0;
     bottom: $cost;
+    z-index: 9;
     width: 100%;
-    border-bottom: 1px solid #eeeeee;
+    border-bottom: 1px solid rgba(203, 203, 203, 0.6); // #cbcbcb; 1px 边框的颜色很重要
     @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
       transform: scaleY(0.5);
+      transform-origin: bottom;
     }
     @media only screen and (-webkit-min-device-pixel-ratio: 3), only screen and (min-device-pixel-ratio: 3) {
       transform: scaleY(0.333);
+      transform-origin: bottom;
+    }
+  }
+}
+// 1px边框，左 0%，右 100%
+@mixin border-l-1px($cost){
+  position: relative;
+  &:after{
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: $cost;
+    z-index: 9;
+    height: 100%;
+    border-left: 1px solid rgba(203, 203, 203, 0.6); // #cbcbcb; 1px 边框的颜色很重要
+    @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
+      transform: scaleX(0.5);
+      transform-origin: left;
+    }
+    @media only screen and (-webkit-min-device-pixel-ratio: 3), only screen and (min-device-pixel-ratio: 3) {
+      transform: scaleX(0.333);
+      transform-origin: left;
     }
   }
 }

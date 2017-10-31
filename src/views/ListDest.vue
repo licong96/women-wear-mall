@@ -18,4 +18,14 @@ export default {
 
 <style scoped lang="scss">
 
+
+  // 页面过渡
+  .list-enter-active,
+  .list-leave-active{
+    transition: .3s all ease;
+  }
+  .list-enter,
+  .list-leave-to{
+    transform: translate3d(100%, 0, 0);
+  }
 </style>

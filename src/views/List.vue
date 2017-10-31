@@ -3,7 +3,7 @@
   <section class="home">
     <!-- 浮动的小型分类筛选 -->
     <transition name="classify">
-      <section class="classify classify-fixed" v-show="classifysShow">
+      <section class="classify classify-fixed _effect" v-show="classifysShow" :class="{'_effect-50': decline}">
         <ul class="classify-wrap">
           <li class="classify-list waves-effect" v-for="item in screens" :key="item.id" @click="_classifysFixed(item.id)">
             <i class="classify-i" :class="_classifyCls(item.id)"></i>
@@ -13,63 +13,44 @@
       </section>
     </transition>
     <!-- 滚动 -->
-    <scroll :data="swiperData" :probe-type="probeType" :listem-scroll="listemScroll" @scroll="scroll" ref="listview">
-      <div class="_effect" :class="{'_effect-30': decline}">
-        <!-- 轮播图组件 -->
-        <section ref="swiperEL">
-          <swiper :swiper-data="swiperData"></swiper>
-        </section>
-        <!-- 分类 -->
-        <section class="classify" ref="classifyEL" :style="{'padding-bottom': classifyStance + 'rem'}">
-          <ul class="classify-wrap">
-            <li class="classify-list waves-effect" v-for="item in screens" :key="item.id" @click="_classifys(item.id)">
-              <i class="classify-i" :class="_classifyCls(item.id)"></i>
-              <p class="classify-p" :class="{'active': classifyP===item.id}">{{item.text}}</p>
-            </li>
-          </ul>
-        </section>
-        <transition name="classify-stance">
-          <!-- <div class="classify-stance" v-show="classifyStance"></div> -->
-        </transition>
-        <!-- 列表 -->
-        <div class="commodity clearfix">
-          <div class="commodity-list" v-for="item in commodity" :key="item.id" @click="openDetail(item.id)">
+    <div class="home _effect" :class="{'_effect-30': decline}">
+      <scroll :data="swiperData" :probe-type="probeType" :listem-scroll="listemScroll" @scroll="scroll" ref="listview">
+        <!--空div用来装载滚动，不能删掉 -->
+        <div>
+          <!-- 轮播图组件 -->
+          <section class="swiper" ref="swiperEL">
+            <swiper :swiper-data="swiperData"></swiper>
+          </section>
+          <!-- 分类 -->
+          <section class="classify" ref="classifyEL" :style="{'padding-bottom': classifyStanceCom}">
+            <ul class="classify-wrap">
+              <li class="classify-list waves-effect" v-for="item in screens" :key="item.id" @click="_classifys(item.id)">
+                <i class="classify-i" :class="_classifyCls(item.id)"></i>
+                <p class="classify-p" :class="{'active': classifyP===item.id}">{{item.text}}</p>
+              </li>
+            </ul>
+          </section>
+          <!-- 列表 -->
+          <div class="commodity clearfix">
+            <div class="commodity-list" v-for="item in commodity" :key="item.id" @click="openDetail(item.id)">
               <img class="commodity-img" :src="item.src" alt="">
               <div class="commodity-text">
-                <p class="title text-over">标题</p>
-                <div class="multi">
-                  <span class="member"><em class="member-em">会员价</em></span>
-                  <span class="money">
-                    <i class="iconfont">
-                      <svg class="icon" aria-hidden="true">
-                        <use xlink:href="#icon-renminbi"></use>
-                      </svg>
-                    </i>
-                    <em class="money-em">500</em>
-                  </span>
-                  <s class="original">
-                    <i class="iconfont icon-renminbi">
-                      <svg class="icon" aria-hidden="true">
-                        <use xlink:href="#icon-renminbi"></use>
-                      </svg>
-                    </i>700
-                  </s>
-                </div>
+                <commodity-text></commodity-text>
               </div>
+            </div>
           </div>
         </div>
-      </div>
-    </scroll>
+      </scroll>
+    </div>
     <!-- 详细页 -->
-    <transition name="transX">
-      <router-view @destroy="destroy"></router-view>
-    </transition>
+    <router-view @destroy="destroy"></router-view>
   </section>
 </template>
 
 <script>
   import Swiper from '@/components/Swiper'
   import Scroll from '@/components/Scroll'
+  import CommodityText from '@/components/CommodityText'
   import {mapMutations} from 'vuex'
 
   export default {
@@ -77,8 +58,8 @@
       return {
         swiperData: [],  // 轮播图数据
         screens: [],    // 筛选
-        classifyP: 0,   // 筛选选择颜色
-        classifysShow: false,
+        classifyP: 0,   // 筛选被选择的值
+        classifysShow: false,   // 浮动筛选显示/隐藏
         classifyStance: 0,
         commodity: [],  // 商品
         probeType: 3,
@@ -97,7 +78,8 @@
       next()
     },
     created() {
-      this.classifyCls = ['classify-a', 'classify-s', 'classify-k', 'classify-q', 'classify-x']
+      this.classifyCls = ['classify-a', 'classify-s', 'classify-k', 'classify-q', 'classify-x']   // 筛选图标
+      this.scrollRefresh = false   // 是否更新srcoll的开关
       this._getListData()
     },
     mounted() {
@@ -105,15 +87,24 @@
       }, 20)
     },
     computed: {
+      classifyStanceCom() {   // 有助于缓存数据
+        return this.classifyStance + 'rem'
+      }
     },
     methods: {
+      openDetail(id) {    // 打开详细页
+        this.decline = true
+        this.$router.push({
+          path: `/list/detail/${id}`
+        })
+      },
       destroy(msg) {
         console.log('list：' + msg)
         this.decline = false
         this.setRouterAnim(this.decline)    // 路由过渡状态保存到 vuex
       },
       scroll(pos) {
-        console.log(-pos.y)
+        // console.log(-pos.y)
         if (-pos.y >= this.classifyTop) {
           this.classifysShow = true
         } else {
@@ -147,19 +138,29 @@
         this.classifyP = id
         this.classifyStance = 1.5
         this.$refs.listview.scrollTo(0, -this.classifyTop, 300)   // 滚动列表位置
-      },
-      openDetail(id) {    // 打开详细页
-        this.$router.push({
-          path: `/list/detail/${id}`
-        })
+        setTimeout(() => {
+          this.$refs.listview.refresh()
+        }, 20)
+        this.scrollRefresh = true
       },
       ...mapMutations({             // 设置
         setRouterAnim: 'SET_ROUTER_ANIM'
       })
     },
+    watch: {
+      classifysShow(newV) {    // 监听列表分类，判断是否计算
+        if (!newV && this.scrollRefresh) {
+          setTimeout(() => {
+            this.$refs.listview.refresh()
+            this.scrollRefresh = false
+          }, 20)
+        }
+      }
+    },
     components: {
       Scroll,
-      Swiper
+      Swiper,
+      CommodityText
     }
   }
 </script>
@@ -169,6 +170,12 @@
   @import "../common/sass/mixin";
   .home {
     height: 100%;
+  }
+  // 轮播组件高度
+  .swiper {
+    overflow: hidden;
+    position: relative;
+    height: 4.8rem /* 180/37.5 */;
   }
   // 分类
   .classify {
@@ -244,7 +251,8 @@
     overflow: hidden;
     float: left;
     position: relative;
-    padding: .05rem /* 2/37.5 */;
+    padding: 0 .05rem /* 2/37.5 */;
+    margin: .05rem /* 2/37.5 */ 0;
     width: 50%;
     height: 7.33rem /* 275/37.5 */;
     .commodity-img {
@@ -258,52 +266,6 @@
       padding: .21rem /* 8/37.5 */ .16rem /* 6/37.5 */;
       width: 100%;
       background-color: rgba(255, 255, 255, .7);
-      .title {
-        font-size: .37rem /* 14/37.5 */;
-        color: $color-text;
-      }
-      .multi {
-        display: flex;
-        align-items: center;
-        margin-top: .21rem /* 8/37.5 */;
-        font-size: 0;
-        .member-em {
-          display: inline-block;
-          padding: .05rem /* 2/37.5 */ .11rem /* 4/37.5 */;
-          border: 1px solid $color-theme;
-          border-radius: .08rem /* 3/37.5 */;
-          font-size: 10px;
-          font-style: normal;
-          color: $color-theme;
-        }
-        .money {
-          display: flex;
-          align-items: center;
-          flex: 1;
-          padding-left: .16rem /* 6/37.5 */;
-          color: $color-theme;
-          .iconfont {
-            font-size: .43rem /* 16/37.5 */;
-          }
-          .money-em {
-            font-size: .48rem /* 18/37.5 */;
-            font-weight: bold;
-            font-style: normal;
-          }
-          .icon {
-            vertical-align: 0;
-          }
-        }
-        .original {
-          display: inline-block;
-          margin-left: auto;
-          color: $color-text;
-          font-size: .37rem /* 14/37.5 */;
-          .iconfont {
-            font-size: .32rem /* 12/37.5 */;
-          }
-        }
-      }
     }
   }
   // 分类筛选过渡
@@ -314,24 +276,5 @@
   .classify-enter,
   .classify-leave-to {
     transform: translate3d(0, -100%, 0);
-  }
-  // // 占位符过渡
-  // .classify-stance-enter-active,
-  // .classify-stance-leave-active {
-  //   transition: .1s all;
-  // }
-  // .classify-stance-enter,
-  // .classify-stance-leave-to {
-  //   height: 0;
-  // }
-
-  // 子页面过渡
-  .transX-enter-active,
-  .transX-leave-active{
-    transition: .3s all ease;
-  }
-  .transX-enter,
-  .transX-leave-to{
-    transform: translate3d(100%, 0, 0);
   }
 </style>

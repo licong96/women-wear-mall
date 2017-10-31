@@ -1,42 +1,138 @@
 <template lang="html">
   <!-- 首页 -->
-  <section class="full-fixed list-detail">
-    <header class="list-header ">
-      <div class="top">
-        <span @click="back">返回</span>
-        <h2 class="title _effect-2" :class="{'_effect-50-o': decline}">标题{{$route.params.id}}</h2>
-      </div>
-      <!-- 导航 -->
-      <div class="_effect" :class="{'_effect-50': decline}">
-        <ul class="list-nav">
-          <li class="list-li" v-for="(item, index) in listNav" @click="_scrollTo(index, $event)" :class="{'current':currentIndex===index}" ref="menuList">{{item}}{{currentIndex}}</li>
-        </ul>
-      </div>
-    </header>
-    <!-- 滚动内容 -->
-    <scroll class="recommend-content" :data="discList" :probe-type="probeType" :listem-scroll="listemScroll" @scroll="scroll" ref="listview">
-      <section class="_effect">
-        <div @click="path" class="bottom _effect" :class="{'_effect-30': decline}">
-          <div class="list-conster" v-for="item in 3" ref="listGroup">
-            <p v-for="iten in 50">商品参数</p>
+  <transition name="list-detail">
+    <section class="full-fixed list-detail">
+      <transition name="list-header">
+        <header class="list-header" v-show="titleShow">
+          <div class="top">
+            <i class="iconfont" @click="back">
+              <svg class="icon" aria-hidden="true">
+                <use xlink:href="#icon-fanhui"></use>
+              </svg>
+            </i>
+            <div class="head-wrap _effect-2" :class="{'_effect-50-o': decline}">
+              <!-- 快速导航 -->
+              <div>
+                <ul class="list-nav">
+                  <li class="list-li" v-for="(item, index) in listNav" @click="_scrollTo(index)" :class="{'current':currentIndex===index}" :key="index" ref="menuList">{{item}}</li>
+                </ul>
+              </div>
+            </div>
+            <i class="iconfont waves-effect waves-circle">
+              <svg class="icon" aria-hidden="true">
+                <use xlink:href="#icon-gouwuche"></use>
+              </svg>
+            </i>
           </div>
-        </div>
+        </header>
+      </transition>
+      <!-- 滚动内容 -->
+      <scroll class="recommend-content" :data="discList" :probe-type="probeType" :listem-scroll="listemScroll" @scroll="scroll" ref="listview">
+        <!-- 空标签是滑动容器，删掉就完蛋 -->
+        <section>
+          <div class="basic" ref="basic">
+            <!-- 轮播组件 -->
+            <div class="swiper">
+              <swiper :swiper-data="swiperData"></swiper>
+            </div>
+            <!-- 商品标题和价格 -->
+            <div class="commodity-text">
+              <commodity-text :title-style="titleStyle"></commodity-text>
+              <span class="freight">快递：免运费</span>
+            </div>
+          </div>
+          <!-- 选择颜色尺寸 -->
+          <div class="select  waves-effect">
+            <span class="select-text">请选择：颜色 尺寸</span>
+            <i class="iconfont">
+              <svg class="icon" aria-hidden="true">
+                <use xlink:href="#icon-jiantou-copy-copy"></use>
+              </svg>
+            </i>
+          </div>
+          <div class="bottom">
+            <!-- 商品参数 -->
+            <div class="list-conster parameter" ref="listGroup0">
+              <ul>
+                <li class="parameter-list" v-for="(item, index) in parameterData" :key="index">
+                  <span class="parameter-title">{{item.title}}</span>
+                  <span class="parameter-desc">{{item.desc}}</span>
+                </li>
+              </ul>
+            </div>
+            <!-- 图片详情 -->
+            <div class="list-conster particulars" ref="listGroup1">
+              <img class="particulars-img" :src="item.src" :key="index" v-for="(item, index) in particularsData" @load="_srcollRefresh">
+            </div>
+            <!-- 用户评论 -->
+            <div class="list-conster comment-border" ref="listGroup2">
+              <comments></comments>
+              <comments></comments>
+              <comments></comments>
+              <div class="comment-more">
+                <span class="waves-effect waves-button more-btn">查看更多评论</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </scroll>
+      <!-- 底部操作按钮 -->
+      <section class="footer-bar">
+        <ul class="bar-wrap">
+          <li class="bar-list">
+            <i class="iconfont">
+              <svg class="icon" aria-hidden="true">
+                <use xlink:href="#icon-shoucang1"></use>
+              </svg>
+            </i>
+            <p class="bar-text">收藏</p>
+          </li>
+          <li class="bar-list">
+            <i class="iconfont">
+              <svg class="icon" aria-hidden="true">
+                <use xlink:href="#icon-dianpu-copy"></use>
+              </svg>
+            </i>
+            <p class="bar-text">店铺</p>
+          </li>
+          <li class="bar-list">
+            <i class="iconfont">
+              <svg class="icon" aria-hidden="true">
+                <use xlink:href="#icon-icon1"></use>
+              </svg>
+            </i>
+            <p class="bar-text">客服</p>
+          </li>
+          <li class="bar-list-add bar-yellow">
+            <p class="bar-add-text">加入购物车</p>
+          </li>
+          <li class="bar-list-add bar-red">
+            <p class="bar-add-text">加入会员</p>
+          </li>
+        </ul>
+        <!-- 这是个奇怪的容器，千万不能删掉，用来计算浮动top的rem高度 -->
+        <div class="top-rem" ref="topHeight"></div>
       </section>
-    </scroll>
-    <transition name="transX">
-    </transition>
-    <router-view @destroy="destroy"></router-view>
-  </section>
+      <router-view @destroy="destroy"></router-view>
+    </section>
+  </transition>
 </template>
 
 <script>
   import Scroll from '@/components/Scroll'
+  import Swiper from '@/components/Swiper'
+  import CommodityText from '@/components/CommodityText'
+  import Comments from '@/components/Comment'
 
   export default {
     data() {
       return {
         discList: [],
-        listNav: ['商品参数', '图片详情', '评价'],
+        swiperData: [],
+        parameterData: [],    // 参数数据
+        particularsData: [],  // 详情数据
+        listNav: ['参数', '详情', '评价'],
+        titleShow: false,   // 头部显示隐藏切换
         listHeight: [],
         scrollY: 0,
         currentIndex: 0,
@@ -57,34 +153,35 @@
       next()
     },
     created() {
-      this.probeType = 3
+      this.probeType = 3        // 滚动参数
       this.listemScroll = true
+      this.titleStyle = true    // 控制商品标题价格颜色
+      this._getListData()
     },
     mounted() {
       this.$nextTick(function() {
-        this._calculateHeight()
       })
     },
     computed: {
     },
     methods: {
-      scroll(pos) {   // 接收滑动位置
-        // console.log(pos.y)
-        this.scrollY = pos.y
-      },
-      _calculateHeight() {    // 计算高度
-        this.listHeight = []
-        this.listGroup = this.$refs.listGroup
-        let height = 0
-        this.listHeight.push(height)
-        for (let i = 0; i < this.listGroup.length; i++) {
-          let item = this.listGroup[i]
-          height += item.clientHeight
-          this.listHeight.push(height)
-        }
-      },
-      _scrollTo(index) {    // 滚动到目标位置
-        this.$refs.listview.scrollToElement(this.listGroup[index], 300)
+      _getListData() {  // 获取首页列表数据
+        this.axios.get('/api/listDetail')
+          .then(function(response) {
+            console.log(response.data)
+            // this.discList = response.data
+            this.swiperData = response.data.swiper
+            this.parameterData = response.data.parameterData
+            this.particularsData = response.data.particularsData
+            setTimeout(() => {
+              this.$refs.listview.refresh()
+              this._calculateHeight()
+              this.topHeight = this.$refs.topHeight.clientHeight  // 因为 header 是浮动的，变相区一个相同高度
+            }, 20)
+          }.bind(this))
+          .catch(function(error) {
+            console.log(error)
+          })
       },
       destroy(msg) {    // 子页面关闭回调
         console.log('listdetail:' + msg)
@@ -97,14 +194,58 @@
       },
       back() {
         this.$router.back()
+      },
+      scroll(pos) {   // 接收滑动位置
+        // console.log(pos.y)
+        this.scrollY = pos.y
+      },
+      _calculateHeight() {    // 计算高度
+        this.listHeight = []
+        // 这也是没有办法的办法
+        this.listGroup = []
+        let listGroup0 = this.$refs.listGroup0
+        let listGroup1 = this.$refs.listGroup1
+        let listGroup2 = this.$refs.listGroup2
+        this.listGroup.push(listGroup0)
+        this.listGroup.push(listGroup1)
+        this.listGroup.push(listGroup2)
+        let height = this.$refs.basic.clientHeight
+        this.listHeight.push(height)
+        for (let i = 0; i < this.listGroup.length; i++) {
+          let item = this.listGroup[i]
+          height += item.clientHeight
+          this.listHeight.push(height)
+        }
+      },
+      _scrollTo(index) {    // 滚动到目标位置
+        this.$refs.listview.scrollToElement(this.listGroup[index], 300, 0, -this.topHeight)   // 偏移
+      },
+      _srcollRefresh() {
+        if (this.loadimgTime) {
+          clearTimeout(this.loadimgTime)
+        }
+        this.loadimgTime = setTimeout(() => {
+          this.$refs.listview.refresh()
+          this._calculateHeight()
+        }, 30)
       }
     },
     watch: {
       scrollY(newY) {
+        console.log(parseInt(-newY))
+        // console.log(this.listHeight)
         const listHeight = this.listHeight
         // 当滚动到顶部，newY>0
-        if (newY > 0) {
+        if (newY > 0 || -newY < this.listHeight[0]) {
           this.currentIndex = 0
+          this.titleShow = false
+          return
+        }
+        this.titleShow = true
+        // 当评论页面不满一屏，currentIndex 就是最后一个
+        let fullHeight = this.listHeight[this.listHeight.length - 1] - this.listHeight[0] + this.topHeight
+        if (parseInt(-newY) >= fullHeight) {
+          this.currentIndex = listHeight.length - 2
           return
         }
         // 在中间部分滚动
@@ -121,58 +262,223 @@
       }
     },
     components: {
-      Scroll
+      Scroll,
+      Swiper,
+      CommodityText,
+      Comments
     }
   }
 </script>
 
 <style scoped lang="scss">
+  @import "../common/sass/variable";
+  @import "../common/sass/mixin";
+
   .list-detail {
     background-color: #fff;
-    font-size: .53rem /* 40/75 */;
   }
   // 头部
   .list-header {
-    position: relative;
-    z-index: 100;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9;
+    width: 100%;
+    height: 1.2rem /* 45/37.5 */;
     background: #fff;
     .top {
       display: flex;
       align-items: center;
-      border-bottom: 1px solid #ddd;
-      line-height: 1.2rem /* 90/75 */;
-      .title {
+      @include border-b-1px(0);
+      .iconfont {
+        width: 1.2rem /* 45/37.5 */;
+        font-size: .48rem /* 18/37.5 */;
+        color: $color-text;
+        text-align: center;
+        line-height: 1.2rem /* 45/37.5 */;
+      }
+      .head-wrap {
         flex: 1;
         text-align: center;
       }
     }
     .list-nav {
       display: flex;
+      padding: 0 .53rem /* 20/37.5 */;
       line-height: 1.2rem /* 90/75 */;
-      box-shadow: 0 1px 2px #ddd;
       .list-li {
+        flex: 1;
+        font-size: .43rem /* 16/37.5 */;
+        color: $color-text;
+        text-align: center;
         &.current {
           color: red;
         }
-        flex: 1;
-        text-align: center;
       }
     }
   }
-
+  // 滑动容器
   .recommend-content {
     height: 100%;
-    .list-conster {
-      border-bottom: 1px solid red;
-      padding-bottom: 10px;
-    }
     .bottom {
-      padding-bottom: 2.4rem /* 180/75 */;
+      padding-bottom: 1.47rem /* 55/37.5 */;
+    }
+  }
+  // 轮播组件高度
+  .swiper {
+    overflow: hidden;
+    position: relative;
+    height: 12rem /* 450/37.5 */;
+  }
+  .commodity-text {
+    padding: .43rem /* 16/37.5 */;
+    // border-bottom: 10px solid $color-background-e;
+    .freight {
+      display: flex;
+      align-items: center;
+      padding-top: .27rem /* 10/37.5 */;
+      font-size: .32rem /* 12/37.5 */;
+      color: $color-text-9;
+    }
+  }
+  // 选择颜色尺寸
+  .select {
+    display: flex;
+    box-sizing: content-box;
+    border-top: 10px solid $color-background-e;
+    padding: 0 .43rem /* 16/37.5 */;
+    height: 1.2rem /* 45/37.5 */;
+    font-size: .37rem /* 14/37.5 */;
+    color: $color-text-6;
+    line-height: 1.2rem /* 45/37.5 */;
+    .select-text {
+      flex: 1;
+    }
+  }
+  // 商品参数
+  .parameter {
+    padding: 0 .43rem /* 16/37.5 */;
+    border-top: 10px solid $color-background-e;
+    .parameter-list {
+      @include border-b-1px(0);
+      line-height: .91rem /* 34/37.5 */;
+      font-size: .37rem /* 14/37.5 */;
+      &:last-child {
+        &:after {
+          border: none;
+        }
+      }
+      .parameter-title {
+        display: inline-block;
+        width: 2.67rem /* 100/37.5 */;
+        color: $color-text-9;
+      }
+      .parameter-desc {
+        // #eb4868;
+        color: $color-text;
+      }
+    }
+  }
+  // 图片详情
+  .particulars {
+    font-size: 0;
+    border-top: 10px solid $color-background-e;
+    .particulars-img {
+      width: 100%;
+    }
+  }
+  // 评论
+  .comment-border {
+    border-top: 10px solid $color-background-e;
+  }
+  // 查看更多评论
+  .comment-more {
+    margin: .43rem /* 16/37.5 */ 0 .53rem /* 20/37.5 */;
+    text-align: center;
+    .more-btn {
+      font-size: .37rem /* 14/37.5 */;
+      border: 1px solid $color-theme;
+      color: $color-theme;
+    }
+  }
+  // 底部操作按钮
+  .footer-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 9;
+    width: 100%;
+    height: 1.33rem /* 50/37.5 */;
+    background-color: #fff;
+    .bar-wrap {
+      @include border-b-1px(100%);
+      display: flex;
+      align-items: center;
+      height: 100%;
+      .bar-list {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        @include border-l-1px(100%);
+        width: 1.33rem /* 50/37.5 */;
+        height: 100%;
+        text-align: center;
+        .iconfont {
+          font-size: .48rem /* 18/37.5 */;
+          color: $color-text;
+        }
+        .bar-text {
+          padding-top: .16rem /* 6/37.5 */;
+          font-size: .32rem /* 12/37.5 */;
+          color: $color-text-9;
+        }
+      }
+      .bar-list-add {
+        flex: 1;
+        font-size: .43rem /* 16/37.5 */;
+        color: #fff;
+        line-height: 1.33rem /* 50/37.5 */;
+        text-align: center;
+        &.bar-yellow {
+          background-color: #FF9800;
+        }
+        &.bar-red {
+          background-color: #FF3355;
+        }
+      }
+    }
+    .top-rem {
+      position: absolute;
+      bottom: 0;
+      left: -1px;
+      z-index: -1;
+      width: 1px;
+      height: 1.2rem /* 45/37.5 */;
     }
   }
 
-  .transX-enter-active,
-  .transX-leave-active{
+  // 页面过渡
+  .list-detail-enter-active,
+  .list-detail-leave-active{
     transition: .3s all ease;
+    .list-header {
+      transition: .3s all ease;
+    }
+  }
+  .list-detail-enter,
+  .list-detail-leave-to{
+    transform: translate3d(100%, 0, 0);
+    .list-header {
+      transform: translate3d(0, -100%, 0);
+    }
+  }
+  // header过渡
+  .list-header-enter-active,
+  .list-header-leave-active{
+    transition: .3s all ease;
+  }
+  .list-header-enter,
+  .list-header-leave-to{
+    transform: translate3d(0, -100%, 0);
   }
 </style>
