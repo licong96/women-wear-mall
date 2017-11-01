@@ -17,6 +17,7 @@ Vue.config.productionTip = false
 Vue.prototype.axios = axios
 
 Vue.use(libFlexible)                // 计算 rem
+Vue.use(require('vue-wechat-title'))
 Waves.init()                        // 波纹点击效果初始化
 //   按钮class         waves-effect waves-button
 //

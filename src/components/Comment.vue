@@ -1,41 +1,63 @@
 <template lang="html">
   <!-- 评论 -->
-  <section class="comment">
-    <div class="title">
-      <img class="comment-img" src="https://img30.360buyimg.com/mobile/s60x60_jfs/t493/15/557644423/10532/62d3112/5473e62aNdb4251d8.png" alt="">
-      <span class="name">张三</span>
-      <time class="time">2017-10-31</time>
-    </div>
-    <div class="star">
-      <!-- <span class="star-grey"></span> -->
-      <span class="star-light"></span>
-    </div>
-    <div class="text">
-      我特意买大一码，看评论说会缩水，关注左很久了，太贵一直没下手，挺舒服的，也很漂亮，是我喜欢的款式
-    </div>
-    <div class="size">
-      <span class="empty">颜色：黑色</span>
-      <span>尺寸：M</span>
-    </div>
-    <div class="img-group">
-      <span class="box-flex-center">
-        <img class="mini-img" src="http://img.alicdn.com/imgextra/i1/0/TB2Sr08kPoIL1JjSZFyXXbFBpXa_!!0-rate.jpg" alt="">
-      </span>
-      <span class="box-flex-center">
-        <img class="mini-img" src="http://img.alicdn.com/imgextra/i1/0/TB2Sr08kPoIL1JjSZFyXXbFBpXa_!!0-rate.jpg" alt="">
-      </span>
-      <span class="box-flex-center">
-        <img class="mini-img" src="http://img.alicdn.com/imgextra/i1/0/TB2Sr08kPoIL1JjSZFyXXbFBpXa_!!0-rate.jpg" alt="">
-      </span>
-      <span class="box-flex-center">
-        <img class="mini-img" src="http://img.alicdn.com/imgextra/i1/0/TB2Sr08kPoIL1JjSZFyXXbFBpXa_!!0-rate.jpg" alt="">
-      </span>
-    </div>
-  </section>
+  <div>
+    <section class="comment" v-for="(item, itemIndex) in commentData" :key="itemIndex">
+      <div class="title">
+        <img class="comment-img" src="https://img30.360buyimg.com/mobile/s60x60_jfs/t493/15/557644423/10532/62d3112/5473e62aNdb4251d8.png" alt="">
+        <span class="name">{{item.username}}</span>
+        <time class="time">{{item.times}}</time>
+      </div>
+      <div class="star">
+        <span class="star-light" :style="{'width': _starLight(item.start)}"></span>
+      </div>
+      <div class="text">
+        我特意买大一码，看评论说会缩水，关注左很久了，太贵一直没下手，挺舒服的，也很漂亮，是我喜欢的款式
+      </div>
+      <div class="size">
+        <span class="empty">颜色：黑色</span>
+        <span>尺寸：M</span>
+      </div>
+      <div class="img-group" v-show="item.minisrc.length">
+        <span class="box-flex-center" v-for="(img, imgIndex) in item.minisrc" :key="imgIndex" @click="_swiperFullShow(itemIndex, imgIndex)">
+          <img class="mini-img" :src="img.src" alt="">
+        </span>
+      </div>
+    </section>
+  </div>
 </template>
 
 <script>
+  import {mapMutations} from 'vuex'
+
   export default {
+    props: {
+      commentData: {
+        type: Array,
+        default: []
+      }
+    },
+    data() {
+      return {
+      }
+    },
+    computed: {
+    },
+    methods: {
+      _starLight(num) {   // 评分，多少星
+        return num * 20 + '%'
+      },
+      _swiperFullShow(fIndex, zIndex) {   // 显示全屏预览轮播图
+        console.log(fIndex, zIndex)
+        // for (let i = 0; i < commentData[])
+        let father = this.commentData[fIndex].minisrc
+        this.setSwiperFull(father)
+        this.setSwiperFullIndex(zIndex)
+      },
+      ...mapMutations({
+        setSwiperFull: 'SET_SWIPER_FULL',
+        setSwiperFullIndex: 'SET_SWIPER_FULL_INDEX'
+      })
+    }
   }
 </script>
 

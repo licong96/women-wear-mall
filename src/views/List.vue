@@ -19,7 +19,7 @@
         <div>
           <!-- 轮播图组件 -->
           <section class="swiper" ref="swiperEL">
-            <swiper :swiper-data="swiperData"></swiper>
+            <swiper :swiper-data="swiperData" :loop="loop"></swiper>
           </section>
           <!-- 分类 -->
           <section class="classify" ref="classifyEL" :style="{'padding-bottom': classifyStanceCom}">
@@ -62,22 +62,22 @@
         classifysShow: false,   // 浮动筛选显示/隐藏
         classifyStance: 0,
         commodity: [],  // 商品
-        probeType: 3,
-        listemScroll: true,
         decline: false    // 页面滑动效果 class
       }
     },
     beforeRouteUpdate(to, from, next) {
       // 在当前路由改变，但是该组件被复用时调用
-      // if (from.name)
       console.log(from.name)
       if (from.name === 'list') {
-        this.decline = true
+        this.decline = false
         this.setRouterAnim(this.decline)    // 路由过渡状态保存到 vuex
       }
       next()
     },
     created() {
+      this.loop = true    // 轮播图组件是否可以循环
+      this.probeType = 3  // 滚动不截流
+      this.listemScroll = true  // 滚动返回值
       this.classifyCls = ['classify-a', 'classify-s', 'classify-k', 'classify-q', 'classify-x']   // 筛选图标
       this.scrollRefresh = false   // 是否更新srcoll的开关
       this._getListData()
@@ -93,7 +93,7 @@
     },
     methods: {
       openDetail(id) {    // 打开详细页
-        this.decline = true
+        this.decline = false
         this.$router.push({
           path: `/list/detail/${id}`
         })

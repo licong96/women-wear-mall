@@ -53,7 +53,63 @@ Mock.mock('/api/listDetail', {  // 详细页数据
   ],
   'particularsData|4-5': [
     {
-      'src': 'http://gw.alicdn.com/imgextra/i4/13261504/TB2pLGXfwMPMeJjy1XbXXcwxVXa_!!13261504.jpg'
+      'src': 'http://gw.alicdn.com/imgextra/i1/50454948/TB2EptuaHT8F1Jjy0FgXXX3fpXa_!!50454948.jpg_970x970q50s150.jpg'
+    }
+  ],
+  'commentData': [
+    {
+      'username': '张三',
+      'userportrait': 'https://img30.360buyimg.com/mobile/s60x60_jfs/t493/15/557644423/10532/62d3112/5473e62aNdb4251d8.png',
+      'times': '2017-10-31',
+      'start': '5',
+      'content': '我特意买大一码，看评论说会缩水，关注左很久了，太贵一直没下手，挺舒服的，也很漂亮，是我喜欢的款式',
+      'minisrc': [
+        {
+          'src': 'http://img.alicdn.com/imgextra/i1/0/TB2Sr08kPoIL1JjSZFyXXbFBpXa_!!0-rate.jpg'
+        },
+        {
+          'src': 'http://img.alicdn.com/imgextra/i1/0/TB2Sr08kPoIL1JjSZFyXXbFBpXa_!!0-rate.jpg'
+        },
+        {
+          'src': 'http://img.alicdn.com/imgextra/i1/0/TB2Sr08kPoIL1JjSZFyXXbFBpXa_!!0-rate.jpg'
+        }
+      ]
+    },
+    {
+      'username': '李四',
+      'userportrait': 'https://img30.360buyimg.com/mobile/s60x60_jfs/t493/15/557644423/10532/62d3112/5473e62aNdb4251d8.png',
+      'times': '2017-10-31',
+      'start': '4',
+      'content': '我特意买大一码，看评论说会缩水，关注左很久了，太贵一直没下手，挺舒服的，也很漂亮，是我喜欢的款式',
+      'minisrc': [
+        {
+          'src': 'http://img.alicdn.com/imgextra/i1/0/TB2Sr08kPoIL1JjSZFyXXbFBpXa_!!0-rate.jpg'
+        },
+        {
+          'src': 'http://img.alicdn.com/imgextra/i1/0/TB2Sr08kPoIL1JjSZFyXXbFBpXa_!!0-rate.jpg'
+        },
+        {
+          'src': 'http://img.alicdn.com/imgextra/i1/0/TB2Sr08kPoIL1JjSZFyXXbFBpXa_!!0-rate.jpg'
+        },
+        {
+          'src': 'http://img.alicdn.com/imgextra/i1/0/TB2Sr08kPoIL1JjSZFyXXbFBpXa_!!0-rate.jpg'
+        }
+      ]
+    },
+    {
+      'username': '王五',
+      'userportrait': 'https://img30.360buyimg.com/mobile/s60x60_jfs/t493/15/557644423/10532/62d3112/5473e62aNdb4251d8.png',
+      'times': '2017-10-31',
+      'start': '3',
+      'content': '我特意买大一码，看评论说会缩水，关注左很久了，太贵一直没下手，挺舒服的，也很漂亮，是我喜欢的款式',
+      'minisrc': [
+        {
+          'src': 'http://img.alicdn.com/imgextra/i1/0/TB2Sr08kPoIL1JjSZFyXXbFBpXa_!!0-rate.jpg'
+        },
+        {
+          'src': 'http://img.alicdn.com/imgextra/i1/0/TB2Sr08kPoIL1JjSZFyXXbFBpXa_!!0-rate.jpg'
+        }
+      ]
     }
   ]
 })

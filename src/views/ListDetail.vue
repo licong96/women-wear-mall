@@ -10,7 +10,7 @@
                 <use xlink:href="#icon-fanhui"></use>
               </svg>
             </i>
-            <div class="head-wrap _effect-2" :class="{'_effect-50-o': decline}">
+            <div class="head-wrap">
               <!-- 快速导航 -->
               <div>
                 <ul class="list-nav">
@@ -33,16 +33,17 @@
           <div class="basic" ref="basic">
             <!-- 轮播组件 -->
             <div class="swiper">
-              <swiper :swiper-data="swiperData"></swiper>
+              <swiper :swiper-data="swiperData" :autoplay="autoplay"></swiper>
             </div>
             <!-- 商品标题和价格 -->
             <div class="commodity-text">
               <commodity-text :title-style="titleStyle"></commodity-text>
               <span class="freight">快递：免运费</span>
             </div>
+            <div class="hr-10"></div>
           </div>
           <!-- 选择颜色尺寸 -->
-          <div class="select  waves-effect">
+          <div class="select" ref="topHeight" @click="_selectShow">
             <span class="select-text">请选择：颜色 尺寸</span>
             <i class="iconfont">
               <svg class="icon" aria-hidden="true">
@@ -53,7 +54,8 @@
           <div class="bottom">
             <!-- 商品参数 -->
             <div class="list-conster parameter" ref="listGroup0">
-              <ul>
+              <div class="hr-10"></div>
+              <ul class="parameter-wrap">
                 <li class="parameter-list" v-for="(item, index) in parameterData" :key="index">
                   <span class="parameter-title">{{item.title}}</span>
                   <span class="parameter-desc">{{item.desc}}</span>
@@ -62,15 +64,15 @@
             </div>
             <!-- 图片详情 -->
             <div class="list-conster particulars" ref="listGroup1">
+              <div class="hr-10"></div>
               <img class="particulars-img" :src="item.src" :key="index" v-for="(item, index) in particularsData" @load="_srcollRefresh">
             </div>
             <!-- 用户评论 -->
             <div class="list-conster comment-border" ref="listGroup2">
-              <comments></comments>
-              <comments></comments>
-              <comments></comments>
+              <div class="hr-10"></div>
+              <comments :comment-data="commentData"></comments>
               <div class="comment-more">
-                <span class="waves-effect waves-button more-btn">查看更多评论</span>
+                <span class="waves-effect waves-button more-btn" @click="_commentMore">查看更多评论</span>
               </div>
             </div>
           </div>
@@ -110,10 +112,9 @@
             <p class="bar-add-text">加入会员</p>
           </li>
         </ul>
-        <!-- 这是个奇怪的容器，千万不能删掉，用来计算浮动top的rem高度 -->
-        <div class="top-rem" ref="topHeight"></div>
       </section>
-      <router-view @destroy="destroy"></router-view>
+      <!-- 子页面路由 -->
+      <router-view></router-view>
     </section>
   </transition>
 </template>
@@ -123,6 +124,7 @@
   import Swiper from '@/components/Swiper'
   import CommodityText from '@/components/CommodityText'
   import Comments from '@/components/Comment'
+  import {mapMutations, mapGetters} from 'vuex'
 
   export default {
     data() {
@@ -131,6 +133,7 @@
         swiperData: [],
         parameterData: [],    // 参数数据
         particularsData: [],  // 详情数据
+        commentData: [],  // 评论数据
         listNav: ['参数', '详情', '评价'],
         titleShow: false,   // 头部显示隐藏切换
         listHeight: [],
@@ -140,21 +143,31 @@
       }
     },
     beforeRouteUpdate(to, from, next) {
-      // 在当前路由改变，但是该组件被复用时调用
+      // 如果用户打开了图片全屏预览，但是糊涂了，不知道怎么的点了返回键，那也要关闭图片预览
+      if (this.swiperFull.length) {
+        this.setSwiperFull([])
+        this.setSwiperFullIndex(0)
+      }
       console.log(from.name)
       if (from.name === 'listdetail') {
-        this.decline = true
+        // this.decline = true
       }
       next()
     },
     beforeRouteLeave(to, from, next) {  // 离开是 false
-      // 导航离开该组件的对应路由时调用
-      this.$emit('destroy', false)
+      // 和上面是一个道理，为的是防止用户点击返回也能关闭图片预览
+      if (this.swiperFull.length) {
+        this.setSwiperFull([])
+        this.setSwiperFullIndex(0)
+      }
+      // this.$emit('destroy', false)
       next()
     },
     created() {
+      this.path = this.$route.params.id   // 当前商品 id
       this.probeType = 3        // 滚动参数
       this.listemScroll = true
+      this.autoplay = 0   // 轮播自动滚动
       this.titleStyle = true    // 控制商品标题价格颜色
       this._getListData()
     },
@@ -163,6 +176,9 @@
       })
     },
     computed: {
+      ...mapGetters([
+        'swiperFull'
+      ])
     },
     methods: {
       _getListData() {  // 获取首页列表数据
@@ -173,6 +189,7 @@
             this.swiperData = response.data.swiper
             this.parameterData = response.data.parameterData
             this.particularsData = response.data.particularsData
+            this.commentData = response.data.commentData
             setTimeout(() => {
               this.$refs.listview.refresh()
               this._calculateHeight()
@@ -209,7 +226,7 @@
         this.listGroup.push(listGroup0)
         this.listGroup.push(listGroup1)
         this.listGroup.push(listGroup2)
-        let height = this.$refs.basic.clientHeight
+        let height = this.$refs.basic.clientHeight      // 顶部图片和文字介绍以及价格高度
         this.listHeight.push(height)
         for (let i = 0; i < this.listGroup.length; i++) {
           let item = this.listGroup[i]
@@ -228,12 +245,26 @@
           this.$refs.listview.refresh()
           this._calculateHeight()
         }, 30)
-      }
+      },
+      _selectShow() {   // 打开商品选择颜色尺寸
+        this.setSelectSizeColor(true)
+      },
+      _commentMore() {    // 打开更多评论页
+        this.$router.push({
+          path: `/list/detail/${this.path}/comment`
+        })
+      },
+      ...mapMutations({
+        setSelectSizeColor: 'SET_SELECT_SIZE_COLOR',
+        setSwiperFull: 'SET_SWIPER_FULL',
+        setSwiperFullIndex: 'SET_SWIPER_FULL_INDEX'
+      })
     },
     watch: {
       scrollY(newY) {
-        console.log(parseInt(-newY))
-        // console.log(this.listHeight)
+        // console.log(newY)
+        let n = Math.ceil(-newY)    // 向上取整
+        newY = -n - 1   // + 1 保证都能在范围内
         const listHeight = this.listHeight
         // 当滚动到顶部，newY>0
         if (newY > 0 || -newY < this.listHeight[0]) {
@@ -244,7 +275,7 @@
         this.titleShow = true
         // 当评论页面不满一屏，currentIndex 就是最后一个
         let fullHeight = this.listHeight[this.listHeight.length - 1] - this.listHeight[0] + this.topHeight
-        if (parseInt(-newY) >= fullHeight) {
+        if (-newY >= fullHeight) {
           this.currentIndex = listHeight.length - 2
           return
         }
@@ -332,7 +363,7 @@
   }
   .commodity-text {
     padding: .43rem /* 16/37.5 */;
-    // border-bottom: 10px solid $color-background-e;
+    background-color: #fff;
     .freight {
       display: flex;
       align-items: center;
@@ -345,20 +376,24 @@
   .select {
     display: flex;
     box-sizing: content-box;
-    border-top: 10px solid $color-background-e;
+    // border-top: .27rem /* 10/37.5 */ solid #eee;
     padding: 0 .43rem /* 16/37.5 */;
     height: 1.2rem /* 45/37.5 */;
     font-size: .37rem /* 14/37.5 */;
     color: $color-text-6;
     line-height: 1.2rem /* 45/37.5 */;
+    background-color: #fff;
     .select-text {
       flex: 1;
     }
   }
   // 商品参数
   .parameter {
-    padding: 0 .43rem /* 16/37.5 */;
-    border-top: 10px solid $color-background-e;
+    // border-top: .27rem /* 10/37.5 */ solid #eee;
+    .parameter-wrap {
+      padding: 0 .43rem /* 16/37.5 */;
+      background-color: #fff;
+    }
     .parameter-list {
       @include border-b-1px(0);
       line-height: .91rem /* 34/37.5 */;
@@ -382,14 +417,15 @@
   // 图片详情
   .particulars {
     font-size: 0;
-    border-top: 10px solid $color-background-e;
+    // border-top: .27rem /* 10/37.5 */ solid #eee;
     .particulars-img {
+      display: block;
       width: 100%;
     }
   }
   // 评论
   .comment-border {
-    border-top: 10px solid $color-background-e;
+    // border-top: .27rem /* 10/37.5 */ solid #eee;
   }
   // 查看更多评论
   .comment-more {
@@ -447,14 +483,13 @@
         }
       }
     }
-    .top-rem {
-      position: absolute;
-      bottom: 0;
-      left: -1px;
-      z-index: -1;
-      width: 1px;
-      height: 1.2rem /* 45/37.5 */;
-    }
+  }
+
+  // 一条颜色容器
+  .hr-10 {
+    width: 100%;
+    height: .27rem /* 10/37.5 */;
+    background: #eee;
   }
 
   // 页面过渡
