@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <div v-wechat-title="$route.meta.title" img-set="../static/logo.png"></div>
     <!-- 修改微信title -->
     <div v-wechat-title="$route.meta.title"></div>
     <!-- <the-header></the-header> -->
@@ -11,7 +12,7 @@
     <!-- 底部导航 -->
     <the-nav></the-nav>
     <!-- 选择商品颜色尺寸 -->
-    <select-size-color v-show="selectSizeColor"></select-size-color>
+    <select-size-color v-show="selectSizeColor" :specification-data="specificationData"></select-size-color>
     <!-- 全屏预览一组图片 -->
     <transition name="swiper-opacity">
       <section class="swiper-full" v-show="swiperFull.length" @click="_swiperFullHide">
@@ -19,7 +20,10 @@
         <swiper :swiper-data="swiperFull" :autoplay="autoplay" :initial-slide="swiperFullIndex"></swiper>
       </section>
     </transition>
-  </div>
+    <!-- 提示信息 -->
+    <alert-hint></alert-hint>
+    <!-- 提示操作状态页面 -->
+    <state-order></state-order>
   </div>
 </template>
 
@@ -28,6 +32,8 @@
   import TheNav from '@/components/TheNav'
   import SelectSizeColor from '@/components/SelectSizeColor'
   import Swiper from '@/components/Swiper'
+  import AlertHint from '@/components/AlertHint'
+  import StateOrder from '@/views/state/Order'
   import {mapGetters, mapMutations} from 'vuex'
 
   export default {
@@ -43,6 +49,7 @@
     computed: {
       ...mapGetters([
         'selectSizeColor',
+        'specificationData',
         'swiperFull',
         'swiperFullIndex'
       ])
@@ -62,17 +69,22 @@
       // TheHeader,
       TheNav,
       SelectSizeColor,
-      Swiper
+      Swiper,
+      AlertHint,
+      StateOrder
     }
   }
 </script>
 
 <style scoped lang="scss">
+  @import "./common/sass/variable";
+
   #app,
   .main {
     overflow: hidden;
     width: 100%;
     height: 100%;
+    background-color: $color-background-e;
   }
   // 全屏轮播图切换
   .swiper-opacity-enter-active,
@@ -97,10 +109,10 @@
     .sw-hint {
       position: absolute;
       top: .32rem /* 12/37.5 */;
-      left: .32rem /* 12/37.5 */;
+      left: 0;
       z-index: 21;
       width: 100%;
-      color: rgba(255, 255, 255, .6);
+      color: rgba(255, 255, 255, .8);
       font-size: .32rem /* 12/37.5 */;
       text-align: center;
       animation: swhint .3s 2s linear forwards;

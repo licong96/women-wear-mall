@@ -71,14 +71,34 @@ body, html {
   z-index: 9;
 }
 /* 页面过渡 */
+.transX-enter-active,
+.transX-leave-active{
+  transition: .3s all ease;
+}
 .transX-enter,
 .transX-leave-to{
   transform: translate3d(100%, 0, 0);
 }
+.transY-enter-active,
+.transY-leave-active{
+  transition: .3s all ease;
+}
+.transY-enter,
+.transY-leave-to{
+  transform: translate3d(0, 100%, 0);
+}
+.opacity-enter-active,
+.opacity-leave-active{
+  transition: .3s all ease;
+}
+.opacity-enter,
+.opacity-leave-to{
+  opacity: 0;
+}
 /* 页面偏移动画 */
 ._effect {
   opacity: 1;
-  transition: .35s all ease;
+  transition: .3s all ease;
 }
 ._effect-30 {
   transform: translate3d(-30%, 0, 0);
@@ -94,4 +114,61 @@ body, html {
 ._effect-50-o {
   transform: translate3d(-50%, 0, 0);
   opacity: 0;
+}
+
+/* 图标 */
+.icon {
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.15em;
+  fill: currentColor;
+  overflow: hidden;
+}
+/* 轮播图小点颜色 */
+.swiper-container {
+  position: static;
+}
+.swiper-pagination-bullet {
+  background: $color-theme;
+}
+.swiper-pagination-bullet-active {
+  background: $color-theme;
+}
+
+// 布局
+.flex {
+  display: flex;
+}
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.flex-1 {
+  flex: 1;
+}
+// padding
+.pd-t-10 {
+  padding-top: .27rem /* 10/37.5 */;
+}
+.pd-r-10 {
+  padding-right: .27rem /* 10/37.5 */;
+}
+.pd-b-10 {
+  padding-bottom: .27rem /* 10/37.5 */;
+}
+.pd-l-10 {
+  padding-left: .27rem /* 10/37.5 */;
+}
+.pd-t-16 {
+  padding-top: .43rem /* 16/37.5 */;
+}
+.pd-r-16 {
+  padding-top: .43rem /* 16/37.5 */;
+}
+.pd-b-16 {
+  padding-top: .43rem /* 16/37.5 */;
+}
+.pd-l-16 {
+  padding-top: .43rem /* 16/37.5 */;
 }

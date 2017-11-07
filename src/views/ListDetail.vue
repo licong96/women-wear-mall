@@ -1,6 +1,6 @@
 <template lang="html">
   <!-- 首页 -->
-  <transition name="list-detail">
+  <!-- <transition name="list-detail"> -->
     <section class="full-fixed list-detail">
       <transition name="list-header">
         <header class="list-header" v-show="titleShow">
@@ -27,7 +27,7 @@
         </header>
       </transition>
       <!-- 滚动内容 -->
-      <scroll class="recommend-content" :data="discList" :probe-type="probeType" :listem-scroll="listemScroll" @scroll="scroll" ref="listview">
+      <scroll class="recommend-content" :data="swiperData" :probe-type="probeType" :listem-scroll="listemScroll" @scroll="scroll" ref="listview">
         <!-- 空标签是滑动容器，删掉就完蛋 -->
         <section>
           <div class="basic" ref="basic">
@@ -106,17 +106,19 @@
             <p class="bar-text">客服</p>
           </li>
           <li class="bar-list-add bar-yellow">
-            <p class="bar-add-text">加入购物车</p>
+            <p class="bar-add-text" @click="_addCart">加入购物车</p>
           </li>
           <li class="bar-list-add bar-red">
-            <p class="bar-add-text">加入会员</p>
+            <p class="bar-add-text" @click="_addMember">加入会员</p>
           </li>
         </ul>
       </section>
       <!-- 子页面路由 -->
-      <router-view></router-view>
+      <transition name="transX">
+        <router-view></router-view>
+      </transition>
     </section>
-  </transition>
+  <!-- </transition> -->
 </template>
 
 <script>
@@ -130,7 +132,8 @@
     data() {
       return {
         discList: [],
-        swiperData: [],
+        specificationData: {},  // 选择商品规格
+        swiperData: [],  // 轮播图
         parameterData: [],    // 参数数据
         particularsData: [],  // 详情数据
         commentData: [],  // 评论数据
@@ -177,7 +180,8 @@
     },
     computed: {
       ...mapGetters([
-        'swiperFull'
+        'swiperFull',
+        'selectSpecification'
       ])
     },
     methods: {
@@ -185,8 +189,9 @@
         this.axios.get('/api/listDetail')
           .then(function(response) {
             console.log(response.data)
-            // this.discList = response.data
-            this.swiperData = response.data.swiper
+            // this.discList = response.data.discList
+            this.swiperData = response.data.discList.swiper
+            this.specificationData = response.data.discList.specification
             this.parameterData = response.data.parameterData
             this.particularsData = response.data.particularsData
             this.commentData = response.data.commentData
@@ -203,11 +208,6 @@
       destroy(msg) {    // 子页面关闭回调
         console.log('listdetail:' + msg)
         this.decline = false
-      },
-      path() {
-        this.$router.push({
-          path: '/list/detail/1/form'
-        })
       },
       back() {
         this.$router.back()
@@ -237,7 +237,7 @@
       _scrollTo(index) {    // 滚动到目标位置
         this.$refs.listview.scrollToElement(this.listGroup[index], 300, 0, -this.topHeight)   // 偏移
       },
-      _srcollRefresh() {
+      _srcollRefresh() {    // 更新滚动高度
         if (this.loadimgTime) {
           clearTimeout(this.loadimgTime)
         }
@@ -246,8 +246,35 @@
           this._calculateHeight()
         }, 30)
       },
-      _selectShow() {   // 打开商品选择颜色尺寸
+      _selectShow() {   // 显示商品选择颜色尺寸，并传入数据
+        this.setSpecificationData(this.specificationData)
         this.setSelectSizeColor(true)
+      },
+      _addCart() {    // 加入购物车
+        let select = this.selectSpecification
+        if (!select.color || !select.size) {
+          this.setSpecificationData(this.specificationData)
+          this.setSelectSizeColor(true)     // 显示选择
+        } else {
+          this.setAlertHint({
+            lsattr: true,
+            text: '成功加入购物车',
+            time: 2000
+          })
+        }
+      },
+      _addMember() {    // 加入会员
+        // 判断是否选择了颜色和尺寸
+        let select = this.selectSpecification
+        if (!select.color || !select.size) {
+          this.setSpecificationData(this.specificationData)
+          this.setSelectSizeColor(true)     // 显示选择
+        } else {
+          this.setSelectSizeColor(false)
+          this.$router.push({
+            path: `/list/detail/${this.path}/submit`
+          })
+        }
       },
       _commentMore() {    // 打开更多评论页
         this.$router.push({
@@ -256,8 +283,10 @@
       },
       ...mapMutations({
         setSelectSizeColor: 'SET_SELECT_SIZE_COLOR',
+        setSpecificationData: 'SET_SPECIFICATION_DATA',
         setSwiperFull: 'SET_SWIPER_FULL',
-        setSwiperFullIndex: 'SET_SWIPER_FULL_INDEX'
+        setSwiperFullIndex: 'SET_SWIPER_FULL_INDEX',
+        setAlertHint: 'SET_ALERT_HINT'
       })
     },
     watch: {
@@ -306,6 +335,7 @@
   @import "../common/sass/mixin";
 
   .list-detail {
+    overflow: hidden;
     background-color: #fff;
   }
   // 头部
@@ -496,24 +526,9 @@
   .list-detail-enter-active,
   .list-detail-leave-active{
     transition: .3s all ease;
-    .list-header {
-      transition: .3s all ease;
-    }
   }
   .list-detail-enter,
   .list-detail-leave-to{
     transform: translate3d(100%, 0, 0);
-    .list-header {
-      transform: translate3d(0, -100%, 0);
-    }
-  }
-  // header过渡
-  .list-header-enter-active,
-  .list-header-leave-active{
-    transition: .3s all ease;
-  }
-  .list-header-enter,
-  .list-header-leave-to{
-    transform: translate3d(0, -100%, 0);
   }
 </style>

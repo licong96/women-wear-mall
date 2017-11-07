@@ -1,24 +1,5 @@
 @import "./reset.scss";
-@import "./base.scss";
 @import "./waves.scss";
+@import "./base.scss";
 // @import "../fonts/iconfont.css"
 // @import "./icon.scss";
-
-/* 图标 */
-.icon {
-  width: 1em;
-  height: 1em;
-  vertical-align: -0.15em;
-  fill: currentColor;
-  overflow: hidden;
-}
-/* 轮播图小点颜色 */
-.swiper-container {
-  position: static;
-}
-.swiper-pagination-bullet {
-  background: $color-theme;
-}
-.swiper-pagination-bullet-active {
-  background: $color-theme;
-}

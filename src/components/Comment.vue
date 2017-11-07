@@ -47,8 +47,6 @@
         return num * 20 + '%'
       },
       _swiperFullShow(fIndex, zIndex) {   // 显示全屏预览轮播图
-        console.log(fIndex, zIndex)
-        // for (let i = 0; i < commentData[])
         let father = this.commentData[fIndex].minisrc
         this.setSwiperFull(father)
         this.setSwiperFullIndex(zIndex)
@@ -132,8 +130,8 @@
         margin-right: .21rem /* 8/37.5 */;
         margin-bottom: .21rem /* 8/37.5 */;
         border-radius: .11rem /* 4/37.5 */;
-        width: 2.13rem /* 80/37.5 */;
-        height: 2.13rem /* 80/37.5 */;
+        width: 2.11rem /* 79/37.5 */;
+        height: 2.11rem /* 79/37.5 */;
       }
       .mini-img {
         width: 100%;

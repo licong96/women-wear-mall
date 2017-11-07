@@ -45,7 +45,6 @@
       this.updateTime = true
     },
     mounted() {
-      console.log(this.swiper)
     },
     computed: {
       swiper() {
@@ -56,9 +55,9 @@
     },
     watch: {
       initialSlide(newInde) {
-        this.swiper.activeIndex = this.initialSlide
         setTimeout(() => {
-          this.swiper.init()
+          this.swiper.params.initialSlide = this.initialSlide   // 设置点击的索引，从第几张图开始
+          this.swiper.init()    // 初始化
         }, 20)
       }
     },

@@ -1,28 +1,26 @@
 <template lang="html">
   <!-- 商品评论 -->
-  <transition name="comment">
-    <section class="full-fixed de-comment">
-      <scroll ref="listview">
-      <!-- div是scroll的容器，不能去掉 -->
-      <div>
-        <!-- 综合评分 -->
-        <div class="de-top">
-          <div class="de-top-t">
-            <p class="text">综合评分：</p>
-            <div class="star">
-              <span class="star-light"></span>
-            </div>
-            <p class="minute">4分</p>
+  <section class="full-fixed de-comment">
+    <!-- <scroll ref="listview"> -->
+    <!-- div是scroll的容器，不能去掉 -->
+    <!-- <div> -->
+      <!-- 综合评分 -->
+      <div class="de-top">
+        <div class="de-top-t">
+          <p class="text">综合评分：</p>
+          <div class="star">
+            <span class="star-light"></span>
           </div>
-        </div>
-        <!-- 详细评论 -->
-        <div class="de-body">
-          <comments :comment-data="commentData"></comments>
+          <p class="minute">4分</p>
         </div>
       </div>
-      </scroll>
-    </section>
-  </transition>
+      <!-- 详细评论 -->
+      <div class="de-body">
+        <comments :comment-data="commentData"></comments>
+      </div>
+    <!-- </div> -->
+    <!-- </scroll> -->
+  </section>
 </template>
 
 <script>
@@ -65,6 +63,8 @@
   @import "../common/sass/mixin";
 
   .de-comment {
+    overflow-y: auto;
+    -webkit-overflow-scrolling:touch;
     z-index: 10;
     background: #fff;
   }
@@ -102,14 +102,5 @@
         }
       }
     }
-  }
-  // 页面过渡
-  .comment-enter-active,
-  .comment-leave-active{
-    transition: .3s all ease;
-  }
-  .comment-enter,
-  .comment-leave-to{
-    transform: translate3d(100%, 0, 0);
   }
 </style>

@@ -43,7 +43,9 @@
       </scroll>
     </div>
     <!-- 详细页 -->
-    <router-view @destroy="destroy"></router-view>
+    <transition name="transX">
+      <router-view @destroy="destroy"></router-view>
+    </transition>
   </section>
 </template>
 
@@ -170,6 +172,7 @@
   @import "../common/sass/mixin";
   .home {
     height: 100%;
+    background-color: #fff;
   }
   // 轮播组件高度
   .swiper {
