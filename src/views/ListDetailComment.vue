@@ -1,9 +1,9 @@
 <template lang="html">
   <!-- 商品评论 -->
   <section class="full-fixed de-comment">
-    <!-- <scroll ref="listview"> -->
+    <scroll :data="commentData" ref="listview">
     <!-- div是scroll的容器，不能去掉 -->
-    <!-- <div> -->
+    <div>
       <!-- 综合评分 -->
       <div class="de-top">
         <div class="de-top-t">
@@ -18,8 +18,8 @@
       <div class="de-body">
         <comments :comment-data="commentData"></comments>
       </div>
-    <!-- </div> -->
-    <!-- </scroll> -->
+    </div>
+    </scroll>
   </section>
 </template>
 
@@ -42,9 +42,6 @@
           .then(function(response) {
             this.commentData = response.data.commentData
             console.log(response.data.commentData)
-            setTimeout(() => {
-              this.$refs.listview.refresh()
-            }, 20)
           }.bind(this))
           .catch(function(error) {
             console.log(error)
@@ -63,8 +60,6 @@
   @import "../common/sass/mixin";
 
   .de-comment {
-    overflow-y: auto;
-    -webkit-overflow-scrolling:touch;
     z-index: 10;
     background: #fff;
   }

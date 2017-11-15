@@ -380,3 +380,20 @@ Mock.mock('/api/my/order', {  // 订单
     }
   ]
 })
+
+Mock.mock('/api/msg', { // 客服消息
+  'msg': [
+    {
+      'who': 0,   // 0 代表对方，1代表我
+      'src': 'https://s3.mogucdn.com/b7/avatar/160205/11qmh6_ie3tgojugzrdcobygyzdambqgayde_100x100.jpg_100x100.jpg',
+      'context': '你好，请问有什么可以帮助您的？'
+    }
+  ],
+  'msgLeft|1': [
+    {
+      'who': 0,
+      'src': 'https://s3.mogucdn.com/b7/avatar/160205/11qmh6_ie3tgojugzrdcobygyzdambqgayde_100x100.jpg_100x100.jpg',
+      'context': '@word'
+    }
+  ]
+})

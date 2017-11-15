@@ -2,10 +2,8 @@
   <!-- 确认订单 -->
   <div class="full-fixed">
     <section class="full-fixed list-submit _effect" :class="{'_effect-30': decline}">
-      <!-- <scroll> -->
-      <!-- <div> -->
       <div class="mini-height">
-        <list-order></list-order>
+        <list-order :click="clickNO"></list-order>
         <div class="leave-msg">
           <textarea class="leave-textarea" cols="30" rows="1" placeholder="给商家留言"></textarea>
         </div>
@@ -19,19 +17,18 @@
           <p class="waves-effect waves-light pickup" @click="_pickup">店内提货</p>
         </div>
       </div>
-      <!-- </div> -->
-      <!-- </scroll> -->
     </section>
     <!-- 快递地址 -->
     <transition name="deliver">
       <div class="deliver-wrap" v-show="deliverShow">
         <div class="full-fixed deliver-mask" @click="_deliverHide"></div>
         <div class="foot-deliver">
+          <div class="bg-line"></div>
           <div class="deliver-title">
             <span>收货人：张飞</span>
             <span>13699531996</span>
           </div>
-          <div class="deliver-body waves-effect waves-block">
+          <div class="deliver-body waves-effect waves-block" @click="_openLocation">
             <i class="d-icon-dizhi"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-dizhi"></use></svg></i>
             <p class="d-body-text">江西省南昌市红谷滩新区卧龙路999号</p>
             <i class="d-icon-jiantou"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-jiantou-copy-copy"></use></svg></i>
@@ -40,49 +37,52 @@
         </div>
       </div>
     </transition>
+    <transition name="transX">
+      <router-view @destroy="destroy"></router-view>
+    </transition>
   </div>
 </template>
 
 <script>
-  // import Scroll from '@/components/Scroll'
   import ListOrder from '@/components/ListOrder'
-  import {mapMutations} from 'vuex'
-
   export default {
-    beforeRouteLeave(to, from, next) {  // 离开是 false
-      this.decline = false
-      this.setStateOrder(false)
-      next()
-    },
     data() {
       return {
         deliverShow: false,     // 打开快递发货地址
         decline: false
       }
     },
+    created() {
+      this.clickNO = false    // 不允许点击
+    },
     methods: {
+      destroy(booleans) {   // 页面过渡
+        setTimeout(() => {
+          this.decline = booleans
+        }, 30)
+      },
+      _pickup() {   // 店内提货
+        this.$router.replace({
+          path: `/list/detail/1/submit/submitorder`
+        })
+      },
+      _openLocation() {   // 打开收货地址
+        this.$router.push({
+          path: `/mycenter/location`
+        })
+      },
       _deliverSite() {    // 判断是否填写快递地址
-        // if () {}
-        this.decline = true
         this.deliverShow = false
-        this.setStateOrder(true)
+        this._pickup()
       },
       _deliverHide() {  // 关闭快递发货地址
         this.deliverShow = false
       },
       _deliver() {    // 快递
         this.deliverShow = true
-      },
-      _pickup() {     // 提货 如果用这种遮罩的形式打开提示页，那么要防止用户刷新页面，做一个判断，回头处理
-        this.decline = true
-        this.setStateOrder(true)
-      },
-      ...mapMutations({
-        'setStateOrder': 'SET_STATE_ORDER'
-      })
+      }
     },
     components: {
-      // Scroll,
       ListOrder
     }
   }
@@ -94,6 +94,7 @@
 
   .full-fixed {
     overflow: hidden;
+    z-index: 10;
   }
   .mini-height {
     // min-height: 100%;
@@ -162,6 +163,7 @@
   .deliver-mask {
     z-index: 22;
     background-color: $color-background-0;
+    backdrop-filter: blur(2px);
   }
   .foot-deliver {
     position: absolute;
@@ -169,13 +171,22 @@
     left: 0;
     z-index: 23;
     width: 100%;
-    background: #fff url('../common/img/line.png') repeat-x;
-    background-size: 10%;
+    background-color: #fff;
+    .bg-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 150%;
+      height: .13rem /* 5/37.5 */;
+      background: url('../common/img/line.png') repeat-x;
+      background-size: 10%;
+      animation: line 20s linear infinite alternate;
+    }
     .deliver-title {
       display: flex;
       justify-content: space-between;
       padding: .43rem /* 16/37.5 */;
-      padding-top: .53rem /* 20/37.5 */;
+      padding-top: .56rem /* 21/37.5 */;
       @include border-b-1px(0);
       color: $color-text;
       font-size: 14px;
@@ -202,7 +213,7 @@
       }
     }
     .deliver-btn {
-      margin-top: .43rem /* 16/37.5 */;
+      margin-top: .53rem /* 20/37.5 */;
       height: 1.33rem /* 50/37.5 */;
       line-height: 1.33rem /* 50/37.5 */;
       font-size: .43rem /* 16/37.5 */;
@@ -227,6 +238,15 @@
     }
     .foot-deliver {
       transform: translate3d(0, 100%, 0);
+    }
+  }
+
+  @keyframes line {
+    0% {
+      transform: translate3d(0, 0 , 0);
+    }
+    100% {
+      transform: translate3d(-30%, 0, 0);
     }
   }
 </style>

@@ -1,55 +1,64 @@
 <template lang="html">
   <!-- 收货地址 -->
   <section class="full-fixed location">
-    <div class="list">
-      <div class="title">
-        <span class="name">张飞</span>
-        <span class="ipone">13699531996</span>
-      </div>
-      <div class="text">江西省南昌市红谷滩新区卧龙路999号</div>
-      <div class="button">
-        <div class="check-box" @click="_checkDefault">
-          <input type="checkbox" name="c-all" value="0" v-model="kDefault" class="checkout-all" :class="{'checked': kDefault}">
-          <label for="c-all" class="settle-label">设为默认</label>
+    <article class="main _effect" :class="{'_effect-50': decline}">
+      <div class="list">
+        <div class="title">
+          <span class="name">张飞</span>
+          <span class="ipone">13699531996</span>
         </div>
-        <div class="oper">
-          <span class="edit"><i class="icon-daipingjia"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-daipingjia"></use></svg></i>编辑</span>
-          <span class="delete"><i class="icon-lajixiang"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-lajixiang"></use></svg></i>编辑</span>
+        <div class="text">江西省南昌市红谷滩新区卧龙路999号</div>
+        <div class="button">
+          <div class="check-box" @click="_checkDefault">
+            <input type="checkbox" name="c-all" value="0" v-model="kDefault" class="checkout-all" :class="{'checked': kDefault}">
+            <label for="c-all" class="settle-label">设为默认</label>
+          </div>
+          <div class="oper">
+            <span class="edit"><i class="icon-daipingjia"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-daipingjia"></use></svg></i>编辑</span>
+            <span class="delete"><i class="icon-lajixiang"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-lajixiang"></use></svg></i>编辑</span>
+          </div>
         </div>
       </div>
+    </article>
+    <!-- 添加多个按钮 -->
+    <div class="waves-effect waves-light f-btn _effect" @click="_openPage" :class="{'_effect-50': decline}">
+      <i class="icon-jia1"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-jia1"></use></svg></i><span>添加新地址</span>
     </div>
-    <div class="list">
-      <div class="title">
-        <span class="name">张飞</span>
-        <span class="ipone">13699531996</span>
-      </div>
-      <div class="text">江西省南昌市红谷滩新区卧龙路999号</div>
-      <div class="button">
-        <div class="check-box" @click="_checkDefault">
-          <input type="checkbox" name="c-all" value="0" v-model="kDefault" class="checkout-all" :class="{'checked': kDefault}">
-          <label for="c-all" class="settle-label">设为默认</label>
-        </div>
-        <div class="oper">
-          <span class="edit"><i class="icon-daipingjia"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-daipingjia"></use></svg></i>编辑</span>
-          <span class="delete"><i class="icon-lajixiang"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-lajixiang"></use></svg></i>编辑</span>
-        </div>
-      </div>
-    </div>
+    <!-- 子路由 -->
+    <transition name="transX">
+      <router-view @destroy="destroy"></router-view>
+    </transition>
   </section>
 </template>
 
 <script>
   export default {
+    beforeRouteEnter (to, from, next) {   // 页面切换效果，进入是 true
+      next(vm => {
+        vm.$emit('destroy', true)
+      })
+    },
     beforeRouteLeave(to, from, next) {  // 离开是 false
       this.$emit('destroy', false)
       next()
     },
     data() {
       return {
-        kDefault: false
+        kDefault: false,
+        decline: false
       }
     },
     methods: {
+      destroy(booleans) {
+        setTimeout(() => {
+          this.decline = booleans
+        }, 30)
+      },
+      _openPage() {
+        this.$router.push({
+          path: `/mycenter/location/form`
+        })
+      },
       _checkDefault() {
         this.kDefault = !this.kDefault
       }
@@ -62,7 +71,13 @@
   @import "../../common/sass/mixin";
 
   .location {
+    display: flex;
+    flex-direction: column;
     background-color: $color-background-e;
+    .main {
+      flex: 1;
+      overflow: auto;
+    }
     .list {
       margin-top: .27rem /* 10/37.5 */;
       padding: 0 .43rem /* 16/37.5 */;
@@ -124,6 +139,20 @@
           padding-right: .11rem /* 4/37.5 */;
           font-size: .43rem /* 16/37.5 */;
         }
+      }
+    }
+    .f-btn {
+      margin-top: .53rem /* 20/37.5 */;
+      width: 100%;
+      height: 1.33rem /* 50/37.5 */;
+      line-height: 1.33rem /* 50/37.5 */;
+      font-size: .43rem /* 16/37.5 */;
+      text-align: center;
+      background-color: $color-theme;
+      color: #fff;
+      width: 100%;
+      .icon-jia1 {
+        padding-right: .16rem /* 6/37.5 */;
       }
     }
   }

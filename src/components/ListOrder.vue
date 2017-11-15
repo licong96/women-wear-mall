@@ -5,18 +5,18 @@
       <!-- 头部 -->
       <div class="top">
         <!-- 选择框，购物车组件才用的到 -->
-        <input type="checkbox" name="c-all" v-model="toggleAll" class="checkout-all" v-show="checkbox" :class="{'checked': toggleAll}">
+        <input type="checkbox" name="c-all" v-model="checkAll" class="checkout-all" v-show="checkbox" :class="{'checked': checkAll}" @click.stop>
         <p class="top-l">
           <i class="icon-l"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-dianpu-copy"></use></svg></i><span>初见小店</span>
         </p>
-        <p class="top-r">
+        <p class="top-r" @click="_openInfo(1)">
           <i class="icon-r"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-icon1"></use></svg></i><span>联系商家</span>
         </p>
       </div>
       <!-- 列表 -->
-      <div class="order-body">
+      <div class="order-body" @click="_openList(0)">
         <!-- 选择框，购物车组件才用的到 -->
-        <input type="checkbox" name="c-all" v-model="toggleAll" class="checkout-all" v-show="checkbox" :class="{'checked': toggleAll}">
+        <input type="checkbox" name="c-all" class="checkout-all" value="id0" v-model="checkAll" v-show="checkbox" :class="{'checked': checkAll}" @click.stop>
         <div class="order-img-wrap">
           <img class="order-img" src="https://s2.mogucdn.com/mlcdn/c45406/171019_45i2j10h7e27554a5hi1d942i63ll_640x960.jpg" alt="">
         </div>
@@ -47,11 +47,51 @@
       toggleAll: {    // 是否全选
         type: Boolean,
         default: false
+      },
+      click: {
+        type: Boolean,    // 是否可以点击打开详细页
+        default: true
+      }
+    },
+    data() {
+      return {
+        checkAll: false,   // 全选
+        cheack: [],       // 当前选中的
+        checkData: []
+      }
+    },
+    methods: {
+      checkOne(id) {    // 当前选中
+        console.log(id)
+      },
+      _openInfo(id) {   // 联系商家
+        this.$router.push({
+          path: `/list/detail/${id}/submit/info`
+        })
+      },
+      _openList(id) {   // 打开列表
+        if (!this.click) {
+          return
+        }
+        this.$router.push({
+          path: `/list/detail/${id}`
+        })
       }
     },
     watch: {
       toggleAll(newValue) {
+        this.checkAll = newValue
+        // console.log('check:', newValue)
+        // console.log('check.length:', newValue.length)
+        // if (newValue.length === 2) {
+        //   this.checkAll = true
+        // } else {
+        //   this.checkAll = false
+        // }
+      },
+      checkAll(newValue) {
         console.log(newValue)
+        this.$emit('order-all', newValue)
       }
     }
   }
@@ -71,8 +111,10 @@
       justify-content: space-between;
       align-items: center;
       @include border-b-1px(0);
-      padding: .53rem /* 20/37.5 */ .43rem /* 16/37.5 */;
+      padding: 0 .43rem /* 16/37.5 */;
+      height: 1.33rem /* 50/37.5 */;
       font-size: .37rem /* 14/37.5 */;
+      line-height: 1.33rem /* 50/37.5 */;
       color: $color-text;
       .top-l {
         flex: 1;
@@ -93,7 +135,9 @@
       padding: .43rem /* 16/37.5 */;
       @include border-b-1px(0);
       .order-img-wrap {
+        overflow: hidden;
         width: 2.13rem /* 80/37.5 */;
+        max-height: 2.93rem /* 110/37.5 */;
         .order-img {
           vertical-align: top;
           width: 100%;
@@ -147,11 +191,13 @@
     }
     .checkout-all {
       display: block;
+      // padding: .11rem /* 4/37.5 */;
       width: .53rem /* 20/37.5 */;
-      height: .56rem /* 21/37.5 */;
+      height: .53rem /* 20/37.5 */;
       background: url('../common/img/checkbox.png') 0 100% no-repeat;
       background-size: .53rem /* 20/37.5 */;
       border: none;
+      @include extend-click();
       &.checked {
         background-position: 0 0;
       }

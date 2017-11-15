@@ -1,10 +1,15 @@
 <template lang="html">
-  <!-- 订单成功 -->
+  <!-- 等待审核 -->
   <section class="full-fixed state-order">
-    <i class="icon-order"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-tijiaodingdan"></use></svg></i>
-    <p class="order-text">订单已提交，等待商家确认</p>
-    <button class="waves-effect waves-button waves-light look-order" type="button" @click="_openOrder">查看订单</button>
-    <button class="waves-effect waves-button home-order" type="button" @click="_home">返回首页</button>
+    <div class="main _effect" :class="{'_effect-50': decline}">
+      <i class="icon-order"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-dengdai"></use></svg></i>
+      <p class="order-text">等待审核</p>
+      <button class="waves-effect waves-button waves-light look-order" type="button" @click="_openOrder">查看详情</button>
+      <button class="waves-effect waves-button home-order" type="button" @click="_home">返回订单</button>
+    </div>
+    <transition name="transX">
+      <router-view @destroy="destroy"></router-view>
+    </transition>
   </section>
 </template>
 
@@ -21,20 +26,24 @@
     },
     data() {
       return {
+        decline: false
       }
     },
     computed: {
     },
     methods: {
+      destroy(booleans) {   // 页面过渡
+        setTimeout(() => {
+          this.decline = booleans
+        }, 30)
+      },
       _openOrder() {
-        this.$router.push({
-          path: `/mycenter/orderbox/all`
+        this.$router.replace({
+          path: `/mycenter/orderbox/return/audit/afterdetails`
         })
       },
       _home() {
-        this.$router.push({
-          path: '/list'
-        })
+        this.$router.back()
       }
     }
   }
@@ -45,11 +54,12 @@
   @import "../../common/sass/mixin";
 
   .state-order {
-    z-index: 99;
+    background-color: #fff;
+  }
+  .main {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #fff;
     .icon-order {
       margin-top: 2.67rem /* 100/37.5 */;
       font-size: 3.47rem /* 130/37.5 */;

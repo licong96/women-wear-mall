@@ -1,124 +1,115 @@
 <template lang="html">
   <!-- 首页 -->
-  <!-- <transition name="list-detail"> -->
-    <section class="full-fixed list-detail">
-      <transition name="list-header">
-        <header class="list-header" v-show="titleShow">
-          <div class="top">
-            <i class="iconfont" @click="back">
-              <svg class="icon" aria-hidden="true">
-                <use xlink:href="#icon-fanhui"></use>
-              </svg>
-            </i>
-            <div class="head-wrap">
-              <!-- 快速导航 -->
-              <div>
-                <ul class="list-nav">
-                  <li class="list-li" v-for="(item, index) in listNav" @click="_scrollTo(index)" :class="{'current':currentIndex===index}" :key="index" ref="menuList">{{item}}</li>
-                </ul>
-              </div>
-            </div>
-            <i class="iconfont waves-effect waves-circle">
-              <svg class="icon" aria-hidden="true">
-                <use xlink:href="#icon-gouwuche"></use>
-              </svg>
-            </i>
-          </div>
-        </header>
-      </transition>
-      <!-- 滚动内容 -->
-      <scroll class="recommend-content" :data="swiperData" :probe-type="probeType" :listem-scroll="listemScroll" @scroll="scroll" ref="listview">
-        <!-- 空标签是滑动容器，删掉就完蛋 -->
-        <section>
-          <div class="basic" ref="basic">
-            <!-- 轮播组件 -->
-            <div class="swiper">
-              <swiper :swiper-data="swiperData" :autoplay="autoplay"></swiper>
-            </div>
-            <!-- 商品标题和价格 -->
-            <div class="commodity-text">
-              <commodity-text :title-style="titleStyle"></commodity-text>
-              <span class="freight">快递：免运费</span>
-            </div>
-            <div class="hr-10"></div>
-          </div>
-          <!-- 选择颜色尺寸 -->
-          <div class="select" ref="topHeight" @click="_selectShow">
-            <span class="select-text">请选择：颜色 尺寸</span>
-            <i class="iconfont">
-              <svg class="icon" aria-hidden="true">
-                <use xlink:href="#icon-jiantou-copy-copy"></use>
-              </svg>
-            </i>
-          </div>
-          <div class="bottom">
-            <!-- 商品参数 -->
-            <div class="list-conster parameter" ref="listGroup0">
-              <div class="hr-10"></div>
-              <ul class="parameter-wrap">
-                <li class="parameter-list" v-for="(item, index) in parameterData" :key="index">
-                  <span class="parameter-title">{{item.title}}</span>
-                  <span class="parameter-desc">{{item.desc}}</span>
-                </li>
+  <section class="full-fixed list-detail">
+    <transition name="list-header">
+      <header class="list-header" v-show="titleShow">
+        <div class="top">
+          <i class="iconfont"></i>
+          <div class="head-wrap">
+            <!-- 快速导航 -->
+            <div>
+              <ul class="list-nav">
+                <li class="list-li" v-for="(item, index) in listNav" @click="_scrollTo(index)" :class="{'current':currentIndex===index}" :key="index" ref="menuList">{{item}}</li>
               </ul>
             </div>
-            <!-- 图片详情 -->
-            <div class="list-conster particulars" ref="listGroup1">
-              <div class="hr-10"></div>
-              <img class="particulars-img" :src="item.src" :key="index" v-for="(item, index) in particularsData" @load="_srcollRefresh">
-            </div>
-            <!-- 用户评论 -->
-            <div class="list-conster comment-border" ref="listGroup2">
-              <div class="hr-10"></div>
-              <comments :comment-data="commentData"></comments>
-              <div class="comment-more">
-                <span class="waves-effect waves-button more-btn" @click="_commentMore">查看更多评论</span>
-              </div>
+          </div>
+          <i class="iconfont waves-effect waves-circle">
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-gouwuche"></use>
+            </svg>
+          </i>
+        </div>
+      </header>
+    </transition>
+    <!-- 滚动内容 -->
+    <scroll class="recommend-content" :data="swiperData" :probe-type="probeType" :listem-scroll="listemScroll"  @scroll="scroll" ref="listview">
+      <!-- 空标签是滑动容器，删掉就完蛋 -->
+      <section>
+        <div class="basic" ref="basic">
+          <!-- 轮播组件 -->
+          <div class="swiper">
+            <swiper :swiper-data="swiperData" :autoplay="autoplay"></swiper>
+          </div>
+          <!-- 商品标题和价格 -->
+          <div class="commodity-text">
+            <commodity-text :title-style="titleStyle"></commodity-text>
+            <span class="freight">快递：免运费</span>
+          </div>
+          <div class="hr-10"></div>
+        </div>
+        <!-- 选择颜色尺寸 -->
+        <div class="select" ref="topHeight" @click="_selectShow">
+          <span class="select-text">请选择：颜色 尺寸</span>
+          <i class="iconfont">
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-jiantou-copy-copy"></use>
+            </svg>
+          </i>
+        </div>
+        <div class="bottom">
+          <!-- 商品参数 -->
+          <div class="list-conster parameter" ref="listGroup0">
+            <div class="hr-10"></div>
+            <ul class="parameter-wrap">
+              <li class="parameter-list" v-for="(item, index) in parameterData" :key="index">
+                <span class="parameter-title">{{item.title}}</span>
+                <span class="parameter-desc">{{item.desc}}</span>
+              </li>
+            </ul>
+          </div>
+          <!-- 图片详情 -->
+          <div class="list-conster particulars" ref="listGroup1">
+            <div class="hr-10"></div>
+            <img class="particulars-img" :src="item.src" :key="index" v-for="(item, index) in particularsData" @load="_srcollRefresh">
+          </div>
+          <!-- 用户评论 -->
+          <div class="list-conster comment-border" ref="listGroup2">
+            <div class="hr-10"></div>
+            <comments :comment-data="commentData"></comments>
+            <div class="comment-more">
+              <span class="waves-effect waves-button more-btn" @click="_openPage('comment')">查看更多评论</span>
             </div>
           </div>
-        </section>
-      </scroll>
-      <!-- 底部操作按钮 -->
-      <section class="footer-bar">
-        <ul class="bar-wrap">
-          <li class="bar-list">
-            <i class="iconfont">
-              <svg class="icon" aria-hidden="true">
-                <use xlink:href="#icon-shoucang1"></use>
-              </svg>
-            </i>
-            <p class="bar-text">收藏</p>
-          </li>
-          <li class="bar-list">
-            <i class="iconfont">
-              <svg class="icon" aria-hidden="true">
-                <use xlink:href="#icon-dianpu-copy"></use>
-              </svg>
-            </i>
-            <p class="bar-text">店铺</p>
-          </li>
-          <li class="bar-list">
-            <i class="iconfont">
-              <svg class="icon" aria-hidden="true">
-                <use xlink:href="#icon-icon1"></use>
-              </svg>
-            </i>
-            <p class="bar-text">客服</p>
-          </li>
-          <li class="bar-list-add bar-yellow">
-            <p class="bar-add-text" @click="_addCart">加入购物车</p>
-          </li>
-          <li class="bar-list-add bar-red">
-            <p class="bar-add-text" @click="_addMember">加入会员</p>
-          </li>
-        </ul>
+        </div>
       </section>
-      <!-- 子页面路由 -->
-      <transition name="transX">
-        <router-view></router-view>
-      </transition>
+    </scroll>
+    <!-- 底部操作按钮 -->
+    <section class="footer-bar">
+      <ul class="bar-wrap">
+        <li class="bar-list" @click="_collect">
+          <i class="iconfont" v-show="!iconCollect"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-shoucang1"></use></svg></i>
+          <i class="iconfont" v-show="iconCollect"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-shoucang"></use></svg></i>
+          <p class="bar-text">收藏</p>
+        </li>
+        <li class="bar-list" @click="_openPageStore">
+          <i class="iconfont">
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-dianpu-copy"></use>
+            </svg>
+          </i>
+          <p class="bar-text">店铺</p>
+        </li>
+        <li class="bar-list" @click="_openPage('info')">
+          <i class="iconfont">
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-icon1"></use>
+            </svg>
+          </i>
+          <p class="bar-text">客服</p>
+        </li>
+        <li class="bar-list-add bar-yellow">
+          <p class="bar-add-text" @click="_addCart">加入购物车</p>
+        </li>
+        <li class="bar-list-add bar-red">
+          <p class="bar-add-text" @click="_addMember">加入会员</p>
+        </li>
+      </ul>
     </section>
-  <!-- </transition> -->
+    <!-- 子页面路由 -->
+    <transition name="transX">
+      <router-view></router-view>
+    </transition>
+  </section>
 </template>
 
 <script>
@@ -129,6 +120,28 @@
   import {mapMutations, mapGetters} from 'vuex'
 
   export default {
+    beforeRouteEnter (to, from, next) {   // 页面切换效果，进入是 true
+      next(vm => {
+        // vm.$emit('destroy', true)
+      })
+    },
+    beforeRouteUpdate(to, from, next) {
+      // 如果用户打开了图片全屏预览，但是糊涂了，不知道怎么的点了返回键，那也要关闭图片预览
+      if (this.swiperFull.length) {
+        this.setSwiperFull([])
+        this.setSwiperFullIndex(0)
+      }
+      next()
+    },
+    beforeRouteLeave(to, from, next) {  // 离开是 false
+      // 和上面是一个道理，为的是防止用户点击返回也能关闭图片预览
+      if (this.swiperFull.length) {
+        this.setSwiperFull([])
+        this.setSwiperFullIndex(0)
+      }
+      // this.$emit('destroy', false)
+      next()
+    },
     data() {
       return {
         discList: [],
@@ -142,41 +155,21 @@
         listHeight: [],
         scrollY: 0,
         currentIndex: 0,
-        decline: false
+        decline: false,
+        path: 0,
+        iconCollect: false     // 收藏图标
       }
-    },
-    beforeRouteUpdate(to, from, next) {
-      // 如果用户打开了图片全屏预览，但是糊涂了，不知道怎么的点了返回键，那也要关闭图片预览
-      if (this.swiperFull.length) {
-        this.setSwiperFull([])
-        this.setSwiperFullIndex(0)
-      }
-      console.log(from.name)
-      if (from.name === 'listdetail') {
-        // this.decline = true
-      }
-      next()
-    },
-    beforeRouteLeave(to, from, next) {  // 离开是 false
-      // 和上面是一个道理，为的是防止用户点击返回也能关闭图片预览
-      if (this.swiperFull.length) {
-        this.setSwiperFull([])
-        this.setSwiperFullIndex(0)
-      }
-      // this.$emit('destroy', false)
-      next()
     },
     created() {
-      this.path = this.$route.params.id   // 当前商品 id
       this.probeType = 3        // 滚动参数
       this.listemScroll = true
       this.autoplay = 0   // 轮播自动滚动
       this.titleStyle = true    // 控制商品标题价格颜色
       this._getListData()
+      this.path = this.$route.params.id   // 当前商品 id
+      console.log('path:', this.path)
     },
     mounted() {
-      this.$nextTick(function() {
-      })
     },
     computed: {
       ...mapGetters([
@@ -196,21 +189,18 @@
             this.particularsData = response.data.particularsData
             this.commentData = response.data.commentData
             setTimeout(() => {
-              this.$refs.listview.refresh()
-              this._calculateHeight()
+              if (this.$refs.listview) {
+                this.$refs.listview.refresh()
+              }
+              if (this._calculateHeight) {
+                this._calculateHeight()
+              }
               this.topHeight = this.$refs.topHeight.clientHeight  // 因为 header 是浮动的，变相区一个相同高度
             }, 20)
           }.bind(this))
           .catch(function(error) {
             console.log(error)
           })
-      },
-      destroy(msg) {    // 子页面关闭回调
-        console.log('listdetail:' + msg)
-        this.decline = false
-      },
-      back() {
-        this.$router.back()
       },
       scroll(pos) {   // 接收滑动位置
         // console.log(pos.y)
@@ -242,8 +232,12 @@
           clearTimeout(this.loadimgTime)
         }
         this.loadimgTime = setTimeout(() => {
-          this.$refs.listview.refresh()
-          this._calculateHeight()
+          if (this.$refs.listview) {
+            this.$refs.listview.refresh()
+          }
+          if (this._calculateHeight) {
+            this._calculateHeight()
+          }
         }, 30)
       },
       _selectShow() {   // 显示商品选择颜色尺寸，并传入数据
@@ -276,9 +270,31 @@
           })
         }
       },
-      _commentMore() {    // 打开更多评论页
+      _collect() {    // 收藏
+        this.iconCollect = !this.iconCollect
+        if (this.iconCollect) {
+          this.setAlertHint({
+            lsattr: true,
+            text: '收藏成功',
+            time: 1500
+          })
+        } else {
+          this.setAlertHint({
+            lsattr: true,
+            text: '取消收藏',
+            time: 1500
+          })
+        }
+      },
+      _openPageStore() {     // 打开店铺
+        this.setRouterAnim(false)
         this.$router.push({
-          path: `/list/detail/${this.path}/comment`
+          path: `/list/store`
+        })
+      },
+      _openPage(path) {   // 开发子页面
+        this.$router.push({
+          path: `/list/detail/${this.path}/${path}`
         })
       },
       ...mapMutations({
@@ -286,7 +302,8 @@
         setSpecificationData: 'SET_SPECIFICATION_DATA',
         setSwiperFull: 'SET_SWIPER_FULL',
         setSwiperFullIndex: 'SET_SWIPER_FULL_INDEX',
-        setAlertHint: 'SET_ALERT_HINT'
+        setAlertHint: 'SET_ALERT_HINT',
+        setRouterAnim: 'SET_ROUTER_ANIM'
       })
     },
     watch: {
@@ -470,11 +487,11 @@
   // 底部操作按钮
   .footer-bar {
     position: fixed;
-    bottom: 0;
+    bottom: -1px;
     left: 0;
     z-index: 9;
     width: 100%;
-    height: 1.33rem /* 50/37.5 */;
+    height: 1.36rem /* 51/37.5 */;
     background-color: #fff;
     .bar-wrap {
       @include border-b-1px(100%);
@@ -503,7 +520,7 @@
         flex: 1;
         font-size: .43rem /* 16/37.5 */;
         color: #fff;
-        line-height: 1.33rem /* 50/37.5 */;
+        line-height: 1.36rem /* 51/37.5 */;
         text-align: center;
         &.bar-yellow {
           background-color: #FF9800;

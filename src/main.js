@@ -11,6 +11,7 @@ import Waves from 'node-waves'
 
 import 'swiper/dist/css/swiper.css'   // 轮播样式
 import '@/common/sass/waves.scss'     // 波纹样式
+import '@/common/stylus/base.styl'
 import '@/common/sass/index.scss'
 
 Vue.config.productionTip = false

@@ -1,5 +1,5 @@
 <template lang="html">
-  <transition name="transY">
+  <transition name="select-transY">
     <section class="select-wrap">
       <div class="mack" @click="_selectHide"></div>
       <div class="sel-content">
@@ -191,7 +191,8 @@
       bottom: 0;
       left: 0;
       z-index: 1;
-      background-color: rgba(0, 0, 0, .4);
+      background-color: $color-background-0;
+	    backdrop-filter: blur(2px);
     }
     .sel-content {
       position: absolute;
@@ -341,16 +342,16 @@
     }
   }
   // 页面过渡
-  .transY-enter-active,
-  .transY-leave-active{
+  .select-transY-enter-active,
+  .select-transY-leave-active{
     transition: .3s all ease;
     .sel-content,
     .mack {
       transition: .3s all ease;
     }
   }
-  .transY-enter,
-  .transY-leave-to{
+  .select-transY-enter,
+  .select-transY-leave-to{
     .mack {
       opacity: 0;
     }

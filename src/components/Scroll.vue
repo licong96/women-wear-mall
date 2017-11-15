@@ -9,21 +9,29 @@
 import BScroll from 'better-scroll'
 export default {
   props: {
-    probeType: {
+    probeType: {    // 派发scroll事件
       type: Number,
       default: 1
     },
-    click: {
+    click: {      // 派发事件
       type: Boolean,
       default: true
     },
-    data: {
+    data: {     // 数据
       type: Array,
       default: null
     },
     listemScroll: {
       type: Boolean,
       default: false
+    },
+    bounce: {   // 是否启用回弹动画效果
+      type: Boolean,
+      default: true
+    },
+    bounceTime: {   // 弹力动画持续的毫秒数，官方700
+      type: Number,
+      default: 300
     }
   },
   mounted() {
@@ -39,7 +47,9 @@ export default {
       this.scroll = new BScroll(this.$refs.wrapper, {
         probeType: this.probeType,
         click: this.click,
-        deceleration: 0.002
+        deceleration: 0.002,
+        bounce: this.bounce,
+        bounceTime: this.bounceTime
       })
       // 监听scroll滚动事件
       if (this.listemScroll) {

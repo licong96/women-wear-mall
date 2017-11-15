@@ -1,6 +1,6 @@
 <template lang="html">
   <!-- 商品标题和价格 -->
-  <section class="commodity-wrapper">
+  <section class="commodity-wrapper" @click="_openList(0)">
     <p class="title" :class="{'text-over': !titleStyle, 'title-fonts': titleStyle}">2017秋冬季新款大码女装韩版女士宽松打底针织衫女套头半高领毛衣女外套</p>
     <div class="multi">
       <span class="member"><em class="member-em">会员价</em></span>
@@ -32,6 +32,13 @@
       }
     },
     computed: {
+    },
+    methods: {
+      _openList(id) {
+        this.$router.push({
+          path: `/list/detail/${id}`
+        })
+      }
     }
   }
 </script>

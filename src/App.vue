@@ -1,13 +1,14 @@
 <template>
   <div id="app">
-    <div v-wechat-title="$route.meta.title" img-set="../static/logo.png"></div>
+    <div v-wechat-title="$route.meta.title" img-set="http://red.tianshic.com/women-wear-mall/logo.png"></div>
     <!-- 修改微信title -->
     <div v-wechat-title="$route.meta.title"></div>
     <!-- <the-header></the-header> -->
     <div class="main">
-      <keep-alive>
-        <router-view></router-view>
-      </keep-alive>
+      <router-view></router-view>
+      <!-- <keep-alive>
+      慎用缓存
+      </keep-alive> -->
     </div>
     <!-- 底部导航 -->
     <the-nav></the-nav>
@@ -22,8 +23,6 @@
     </transition>
     <!-- 提示信息 -->
     <alert-hint></alert-hint>
-    <!-- 提示操作状态页面 -->
-    <state-order></state-order>
   </div>
 </template>
 
@@ -33,7 +32,6 @@
   import SelectSizeColor from '@/components/SelectSizeColor'
   import Swiper from '@/components/Swiper'
   import AlertHint from '@/components/AlertHint'
-  import StateOrder from '@/views/state/Order'
   import {mapGetters, mapMutations} from 'vuex'
 
   export default {
@@ -44,6 +42,8 @@
     },
     created() {
       this.autoplay = 0     // 取消全屏轮播自动播放
+      console.log('%c开发者：黎聪 ', 'background-image:-webkit-gradient( linear, left top, right top, color-stop(0, #f22), color-stop(0.15, #f2f), color-stop(0.3, #22f), color-stop(0.45, #2ff), color-stop(0.6, #FF3355),color-stop(0.75, #22f), color-stop(0.9, #ff7459), color-stop(1, #ff7459) );color:transparent;-webkit-background-clip: text;font-size:24px;')
+      console.log('%cGitHub：https://github.com/licong96', 'text-shadow: 0 1px 0 #ccc,0 2px 0 #c9c9c9,0 3px 0 #bbb,0 4px 0 #b9b9b9,0 5px 0 #aaa,0 6px 1px rgba(0,0,0,.1),0 0 5px rgba(0,0,0,.1),0 1px 3px rgba(0,0,0,.3),0 3px 5px rgba(0,0,0,.2),0 5px 10px rgba(0,0,0,.25),0 10px 10px rgba(0,0,0,.2),0 20px 20px rgba(0,0,0,.15);font-size:16px')
     },
     mounted() {},
     computed: {
@@ -70,8 +70,7 @@
       TheNav,
       SelectSizeColor,
       Swiper,
-      AlertHint,
-      StateOrder
+      AlertHint
     }
   }
 </script>
@@ -82,6 +81,8 @@
   #app,
   .main {
     overflow: hidden;
+    margin: 0 auto;
+    max-width: 600px;
     width: 100%;
     height: 100%;
     background-color: $color-background-e;

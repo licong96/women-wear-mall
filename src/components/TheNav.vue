@@ -1,7 +1,7 @@
 <template>
   <!-- 首页底部导航 -->
   <footer class="the-nav">
-    <div class="footer _effect" :class="{'_effect-50': routerAnim}">
+    <div class="footer _effect">
       <ul class="nav-box">
         <router-link to="/list" tag="li" class="nav-li">
           <i class="iconfont">

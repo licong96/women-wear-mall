@@ -83,14 +83,6 @@
 
 <script>
   export default {
-    beforeRouteUpdate(to, from, next) {
-      next()
-      if (from.name === 'mycenter') {
-        setTimeout(() => {
-          this.decline = true
-        }, 100)
-      }
-    },
     data() {
       return {
         decline: false
@@ -102,9 +94,13 @@
           path: `/mycenter/${page}`
         })
       },
-      destroy() {   // 页面过渡
-        this.decline = false
+      destroy(booleans) {   // 页面过渡
+        setTimeout(() => {
+          this.decline = booleans
+        }, 30)
       }
+    },
+    components: {
     }
   }
 </script>

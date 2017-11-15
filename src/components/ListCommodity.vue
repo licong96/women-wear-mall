@@ -1,7 +1,7 @@
 <template lang="html">
   <!-- 商品收藏列表 -->
   <div class="wrap">
-    <section class="list-comm">
+    <section class="list-comm" @click="_openList(0)">
       <div class="l-c-img-wrap">
         <img src="https://img11.360buyimg.com/pop/s120x120_jfs/t11017/262/434772985/136198/74d1179f/59f05a92N2f8fb6f2.jpg" class="l-c-img" alt="">
       </div>
@@ -30,6 +30,13 @@
       collectComm: {    // 是否显示删除按钮
         type: Boolean,
         default: false
+      }
+    },
+    methods: {
+      _openList(id) {
+        this.$router.push({
+          path: `/list/detail/${id}`
+        })
       }
     }
   }

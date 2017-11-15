@@ -1,7 +1,7 @@
 <template lang="html">
   <!-- 购物车 -->
   <section class="shopping">
-    <list-order :checkbox="checkbox" :toggle-all="toggleAll"></list-order>
+    <list-order :checkbox="checkbox" :toggle-all="toggleAll" @order-all="orderAll"></list-order>
     <!-- 结算 -->
     <div class="settle">
       <div class="check-box" @click="_checkAll">
@@ -29,12 +29,14 @@
       }
     },
     created() {
-      console.log(this.toggleAll)
-      this.toggleAll = true
     },
     methods: {
       _checkAll() {
         this.toggleAll = !this.toggleAll
+      },
+      orderAll(val) {
+        console.log(val)
+        this.toggleAll = val
       }
     },
     components: {

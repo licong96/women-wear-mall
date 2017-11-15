@@ -1,10 +1,11 @@
 <template lang="html">
-  <!-- 订单成功 -->
-  <section class="full-fixed state-order">
-    <i class="icon-order"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-tijiaodingdan"></use></svg></i>
-    <p class="order-text">订单已提交，等待商家确认</p>
-    <button class="waves-effect waves-button waves-light look-order" type="button" @click="_openOrder">查看订单</button>
-    <button class="waves-effect waves-button home-order" type="button" @click="_home">返回首页</button>
+  <!-- 评价成功 -->
+  <section class="full-fixed evaluate">
+    <div class="main">
+      <i class="icon-order"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-pingjia"></use></svg></i>
+      <p class="order-text">评价成功</p>
+      <button class="waves-effect waves-button home-order" type="button" @click="_back">返回订单</button>
+    </div>
   </section>
 </template>
 
@@ -19,22 +20,9 @@
       this.$emit('destroy', false)
       next()
     },
-    data() {
-      return {
-      }
-    },
-    computed: {
-    },
     methods: {
-      _openOrder() {
-        this.$router.push({
-          path: `/mycenter/orderbox/all`
-        })
-      },
-      _home() {
-        this.$router.push({
-          path: '/list'
-        })
+      _back() {
+        this.$router.back()
       }
     }
   }
@@ -44,15 +32,18 @@
   @import "../../common/sass/variable";
   @import "../../common/sass/mixin";
 
-  .state-order {
-    z-index: 99;
+  .evaluate {
+    overflow: hidden;
+    background-color: #fff;
+  }
+  .main {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #fff;
     .icon-order {
       margin-top: 2.67rem /* 100/37.5 */;
       font-size: 3.47rem /* 130/37.5 */;
+      color: $color-theme;
     }
     .order-text {
       margin-top: .53rem /* 20/37.5 */;

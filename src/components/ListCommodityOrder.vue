@@ -8,7 +8,7 @@
         </span>
         <span class="store">{{item.title.store}}</span>
       </div>
-      <section class="list-comm">
+      <section class="list-comm" @click="_openList(index)">
         <div class="l-c-img-wrap">
           <img :src="item.main.src" class="l-c-img" alt="">
         </div>
@@ -27,19 +27,21 @@
       </section>
       <!-- 操作按钮 -->
       <div class="l-btn">
-        <button type="button" class="waves-button deliver take">退货</button>
-        <button type="button" class="waves-button remain">申请售后</button>
+        <button type="button" class="waves-button deliver take" @click="_openPage('return')">退货</button>
+        <button type="button" class="waves-button remain" @click="_openPage('return')">申请售后</button>
         <!-- <button type="button">提醒发货</button> -->
         <button type="button" class="waves-button">查看物流</button>
-        <button type="button" class="waves-button color-1 take">确认收货</button>
-        <button type="button" class="waves-button color-1 remain">评价</button>
-        <button type="button" class="waves-button color-1 after">退货详情</button>
+        <button type="button" class="waves-button color-1 take" @click="_openPage('succeed')">确认收货</button>
+        <button type="button" class="waves-button color-1 remain" @click="_openPage('succeed/evaluate')">评价</button>
+        <button type="button" class="waves-button color-1 after" @click="_openPage('return/audit/afterdetails')">退货详情</button>
       </div>
     </div>
   </section>
 </template>
 
 <script>
+  import {mapMutations} from 'vuex'
+  
   export default {
     props: {
       listData: {
@@ -50,6 +52,19 @@
     computed: {
     },
     methods: {
+      _openList(id) {   // 打开商品详情页
+        this.$router.push({
+          path: `/list/detail/${id}`
+        })
+      },
+      _openPage(path) {   // 打开操作页
+        this.setRouterAnim(true)
+        setTimeout(() => {
+          this.$router.push({
+            path: `/mycenter/orderbox/${path}`
+          })
+        }, 20)
+      },
       _cutButton(num) {
         if (num === 0) {
           return 'btn-deliver'
@@ -60,7 +75,10 @@
         } else if (num === 3) {
           return 'btn-after'
         }
-      }
+      },
+      ...mapMutations({
+        setRouterAnim: 'SET_ROUTER_ANIM'
+      })
     }
   }
 </script>

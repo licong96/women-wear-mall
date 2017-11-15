@@ -12,18 +12,33 @@
       <scroll ref="scroll">
         <div>
           <keep-alive>
-            <router-view @scrolls="scrolls"></router-view>
+            <transition :name="transition">
+              <router-view name="main" @scrolls="scrolls"></router-view>
+            </transition>
           </keep-alive>
         </div>
       </scroll>
+    </div>
+    <!-- 其他操作路由 -->
+    <div class="else">
+      <transition name="transX">
+        <router-view name="else"></router-view>
+      </transition>
     </div>
   </section>
 </template>
 
 <script>
   import Scroll from '@/components/Scroll'
+  import {mapGetters, mapMutations} from 'vuex'
 
   export default {
+    beforeRouteEnter (to, from, next) {   // 页面切换效果，进入是 true
+      next(vm => {
+        vm._cutActive()
+        vm.$emit('destroy', true)
+      })
+    },
     beforeRouteLeave(to, from, next) {  // 离开是 false
       this.$emit('destroy', false)
       next()
@@ -35,6 +50,14 @@
     },
     created() {
       this._cutActive()
+    },
+    computed: {
+      transition() {
+        return this.routerAnim ? 'transXL' : ''
+      },
+      ...mapGetters([
+        'routerAnim'
+      ])
     },
     methods: {
       scrolls() {
@@ -65,12 +88,16 @@
         }
       },
       _openCut(cut, index) {    // 切换
+        this.setRouterAnim(false)
         this.currentIndex = index
         this.$router.replace({
           path: `/mycenter/orderbox/${cut}`
         })
         this.scrolls()
-      }
+      },
+      ...mapMutations({
+        'setRouterAnim': 'SET_ROUTER_ANIM'
+      })
     },
     components: {
       Scroll

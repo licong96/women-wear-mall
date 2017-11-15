@@ -3,7 +3,7 @@
   <section class="home">
     <!-- 浮动的小型分类筛选 -->
     <transition name="classify">
-      <section class="classify classify-fixed _effect" v-show="classifysShow" :class="{'_effect-50': decline}">
+      <section class="classify classify-fixed _effect" v-show="classifysShow">
         <ul class="classify-wrap">
           <li class="classify-list waves-effect" v-for="item in screens" :key="item.id" @click="_classifysFixed(item.id)">
             <i class="classify-i" :class="_classifyCls(item.id)"></i>
@@ -13,8 +13,8 @@
       </section>
     </transition>
     <!-- 滚动 -->
-    <div class="home _effect" :class="{'_effect-30': decline}">
-      <scroll :data="swiperData" :probe-type="probeType" :listem-scroll="listemScroll" @scroll="scroll" ref="listview">
+    <div class="home _effect">
+      <scroll :data="swiperData" :probe-type="probeType" :listem-scroll="listemScroll" :bounce="bounce" @scroll="scroll" ref="listview">
         <!--空div用来装载滚动，不能删掉 -->
         <div>
           <!-- 轮播图组件 -->
@@ -43,9 +43,15 @@
       </scroll>
     </div>
     <!-- 详细页 -->
-    <transition name="transX">
-      <router-view @destroy="destroy"></router-view>
+    <transition :name="transition">
+      <router-view name="detail" @destroy="destroy"></router-view>
     </transition>
+    <router-view name="store"></router-view>
+    <!-- <transition name="transX">
+    </transition> -->
+    <!-- 店铺 -->
+    <!-- <keep-alive>
+    </keep-alive> -->
   </section>
 </template>
 
@@ -53,7 +59,7 @@
   import Swiper from '@/components/Swiper'
   import Scroll from '@/components/Scroll'
   import CommodityText from '@/components/CommodityText'
-  import {mapMutations} from 'vuex'
+  import {mapMutations, mapGetters} from 'vuex'
 
   export default {
     data() {
@@ -63,16 +69,12 @@
         classifyP: 0,   // 筛选被选择的值
         classifysShow: false,   // 浮动筛选显示/隐藏
         classifyStance: 0,
-        commodity: [],  // 商品
-        decline: false    // 页面滑动效果 class
+        commodity: []  // 商品
       }
     },
     beforeRouteUpdate(to, from, next) {
       // 在当前路由改变，但是该组件被复用时调用
-      console.log(from.name)
       if (from.name === 'list') {
-        this.decline = false
-        this.setRouterAnim(this.decline)    // 路由过渡状态保存到 vuex
       }
       next()
     },
@@ -80,6 +82,7 @@
       this.loop = true    // 轮播图组件是否可以循环
       this.probeType = 3  // 滚动不截流
       this.listemScroll = true  // 滚动返回值
+      this.bounce = true     // 关闭弹动
       this.classifyCls = ['classify-a', 'classify-s', 'classify-k', 'classify-q', 'classify-x']   // 筛选图标
       this.scrollRefresh = false   // 是否更新srcoll的开关
       this._getListData()
@@ -91,19 +94,23 @@
     computed: {
       classifyStanceCom() {   // 有助于缓存数据
         return this.classifyStance + 'rem'
-      }
+      },
+      transition() {
+        return this.routerAnim ? 'transX' : ''
+      },
+      ...mapGetters([
+        'routerAnim'
+      ])
     },
     methods: {
       openDetail(id) {    // 打开详细页
-        this.decline = false
+        this.setRouterAnim(true)
         this.$router.push({
           path: `/list/detail/${id}`
         })
       },
       destroy(msg) {
         console.log('list：' + msg)
-        this.decline = false
-        this.setRouterAnim(this.decline)    // 路由过渡状态保存到 vuex
       },
       scroll(pos) {
         // console.log(-pos.y)

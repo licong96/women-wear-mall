@@ -22,6 +22,11 @@
   import {mapMutations} from 'vuex'
 
   export default {
+    beforeRouteEnter (to, from, next) {   // 页面切换效果，进入是 true
+      next(vm => {
+        vm.$emit('destroy', true)
+      })
+    },
     beforeRouteLeave(to, from, next) {  // 离开是 false
       this.$emit('destroy', false)
       next()
