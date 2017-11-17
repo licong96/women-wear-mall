@@ -1,23 +1,13 @@
 <template lang="html">
   <!-- 商品标题和价格 -->
   <section class="commodity-wrapper" @click="_openList(0)">
-    <p class="title" :class="{'text-over': !titleStyle, 'title-fonts': titleStyle}">2017秋冬季新款大码女装韩版女士宽松打底针织衫女套头半高领毛衣女外套</p>
+    <p class="title" :class="{'text-over': !titleStyle, 'title-fonts': titleStyle}">{{data.title}}</p>
     <div class="multi">
       <span class="member"><em class="member-em">会员价</em></span>
       <span class="money">
-        <i class="iconfont">
-          <svg class="icon" aria-hidden="true">
-            <use xlink:href="#icon-renminbi"></use>
-          </svg>
-        </i>
-        <em class="money-em">500</em>
+        <i class="iconfont"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-renminbi"></use></svg></i><em class="money-em">{{data.price}}</em>
       </span>
-      <s class="original">
-        <i class="iconfont icon-renminbi">
-          <svg class="icon" aria-hidden="true">
-            <use xlink:href="#icon-renminbi"></use>
-          </svg>
-        </i>700
+      <s class="original"><i class="iconfont icon-renminbi"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-renminbi"></use></svg></i>{{data.orgPrice}}
       </s>
     </div>
   </section>
@@ -29,6 +19,10 @@
       titleStyle: {   // 控制 title 样式
         type: Boolean,
         default: false
+      },
+      data: {
+        type: Object,
+        default: {}
       }
     },
     computed: {

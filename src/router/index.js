@@ -21,6 +21,16 @@ export default new Router({
       component: resolve => require(['@/views/List'], resolve),
       children: [
         {
+          path: 'classify/:id',
+          name: 'classify',
+          meta: {
+            title: '分类'
+          },
+          components: {
+            detail: resolve => require(['@/views/ListClassify'], resolve)
+          }
+        },
+        {
           path: 'detail/:id',
           name: 'listdetail',
           meta: {

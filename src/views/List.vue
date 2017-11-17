@@ -1,20 +1,9 @@
 <template lang="html">
   <!-- 首页 -->
   <section class="home">
-    <!-- 浮动的小型分类筛选 -->
-    <transition name="classify">
-      <section class="classify classify-fixed _effect" v-show="classifysShow">
-        <ul class="classify-wrap">
-          <li class="classify-list waves-effect" v-for="item in screens" :key="item.id" @click="_classifysFixed(item.id)">
-            <i class="classify-i" :class="_classifyCls(item.id)"></i>
-            <p class="classify-p" :class="{'active': classifyP===item.id}">{{item.text}}</p>
-          </li>
-        </ul>
-      </section>
-    </transition>
     <!-- 滚动 -->
     <div class="home _effect">
-      <scroll :data="swiperData" :probe-type="probeType" :listem-scroll="listemScroll" :bounce="bounce" @scroll="scroll" ref="listview">
+      <scroll :data="commodity" ref="listview">
         <!--空div用来装载滚动，不能删掉 -->
         <div>
           <!-- 轮播图组件 -->
@@ -22,20 +11,20 @@
             <swiper :swiper-data="swiperData" :loop="loop"></swiper>
           </section>
           <!-- 分类 -->
-          <section class="classify" ref="classifyEL" :style="{'padding-bottom': classifyStanceCom}">
+          <section class="classify" ref="classifyEL">
             <ul class="classify-wrap">
-              <li class="classify-list waves-effect" v-for="item in screens" :key="item.id" @click="_classifys(item.id)">
-                <i class="classify-i" :class="_classifyCls(item.id)"></i>
-                <p class="classify-p" :class="{'active': classifyP===item.id}">{{item.text}}</p>
+              <li class="classify-list waves-effect" v-for="item in screens" :key="item.fcid" @click="_openClassify(item.fcid)">
+                <i class="classify-i" :style="_classifyBg(item.image)"></i>
+                <p class="classify-p">{{item.title}}</p>
               </li>
             </ul>
           </section>
           <!-- 列表 -->
           <div class="commodity clearfix">
-            <div class="commodity-list" v-for="item in commodity" :key="item.id" @click="openDetail(item.id)">
-              <img class="commodity-img" :src="item.src" alt="">
+            <div class="commodity-list" v-for="item in commodity" :key="item.itemId" @click="openDetail(item.itemId)">
+              <img class="commodity-img" :src="item.img" alt="" @load="refreshs">
               <div class="commodity-text">
-                <commodity-text></commodity-text>
+                <commodity-text :data="item"></commodity-text>
               </div>
             </div>
           </div>
@@ -60,15 +49,14 @@
   import Scroll from '@/components/Scroll'
   import CommodityText from '@/components/CommodityText'
   import {mapMutations, mapGetters} from 'vuex'
+  import {getHome, getList} from '@/api/list'
+  import {getQueryString} from '@/common/js/dom'
 
   export default {
     data() {
       return {
         swiperData: [],  // 轮播图数据
         screens: [],    // 筛选
-        classifyP: 0,   // 筛选被选择的值
-        classifysShow: false,   // 浮动筛选显示/隐藏
-        classifyStance: 0,
         commodity: []  // 商品
       }
     },
@@ -80,21 +68,14 @@
     },
     created() {
       this.loop = true    // 轮播图组件是否可以循环
-      this.probeType = 3  // 滚动不截流
-      this.listemScroll = true  // 滚动返回值
-      this.bounce = true     // 关闭弹动
-      this.classifyCls = ['classify-a', 'classify-s', 'classify-k', 'classify-q', 'classify-x']   // 筛选图标
-      this.scrollRefresh = false   // 是否更新srcoll的开关
-      this._getListData()
+      this._getHome()
+      this._getList()
     },
     mounted() {
       setTimeout(() => {
       }, 20)
     },
     computed: {
-      classifyStanceCom() {   // 有助于缓存数据
-        return this.classifyStance + 'rem'
-      },
       transition() {
         return this.routerAnim ? 'transX' : ''
       },
@@ -109,62 +90,50 @@
           path: `/list/detail/${id}`
         })
       },
+      _openClassify(id) {   // 打开分类列表页
+        this.setRouterAnim(true)
+        this.$router.push({
+          path: `/list/classify/${id}`
+        })
+      },
       destroy(msg) {
         console.log('list：' + msg)
       },
-      scroll(pos) {
-        // console.log(-pos.y)
-        if (-pos.y >= this.classifyTop) {
-          this.classifysShow = true
-        } else {
-          this.classifyStance = 0
-          this.classifysShow = false
+      refreshs() {    // 重新计算滚动，只执行一次
+        if (this.refreshTime) {
+          clearTimeout(this.refreshTime)
         }
-      },
-      _getListData() {  // 获取首页列表数据
-        this.axios.get('/api/list')
-          .then(function(response) {
-            console.log(response.data)
-            this.swiperData = response.data.sliderImg
-            this.screens = response.data.screens
-            this.commodity = response.data.commodity
-            setTimeout(() => {
-              this.classifyTop = this.$refs.swiperEL.clientHeight + this.$refs.classifyEL.clientHeight  // 浮动列表距离顶部值
-              this.$refs.listview.refresh()
-            }, 20)
-          }.bind(this))
-          .catch(function(error) {
-            console.log(error)
-          })
-      },
-      _classifyCls(id) {    // 分类图标的class
-        return this.classifyCls[id]
-      },
-      _classifys(id) {      // 分类赛选
-        this.classifyP = id
-      },
-      _classifysFixed(id) {   // 浮动分类筛选
-        this.classifyP = id
-        this.classifyStance = 1.5
-        this.$refs.listview.scrollTo(0, -this.classifyTop, 300)   // 滚动列表位置
-        setTimeout(() => {
+        this.refreshTime = setTimeout(() => {
           this.$refs.listview.refresh()
         }, 20)
-        this.scrollRefresh = true
+      },
+      _getHome() {  // 首页数据
+        getHome().then((res) => {
+          console.log(res)
+          this.swiperData = res.data[51822].list      // 轮播
+          // this.screens = res.data[51836].list      // 筛选
+          let arr = []
+          res.data[51836].list.forEach((item) => {    // 手动添加 fcid筛选
+            item.fcid = getQueryString(item.link, 'fcid')
+            arr.push(item)
+          })
+          this.screens = arr
+        })
+      },
+      _getList() {    // 首页列表数据
+        getList().then((res) => {
+          console.log(res)
+          this.commodity = res.result.wall.docs
+        })
+      },
+      _classifyBg(img) {  // 分类背景图片
+        return `background-image: url(${img})`
       },
       ...mapMutations({             // 设置
         setRouterAnim: 'SET_ROUTER_ANIM'
       })
     },
     watch: {
-      classifysShow(newV) {    // 监听列表分类，判断是否计算
-        if (!newV && this.scrollRefresh) {
-          setTimeout(() => {
-            this.$refs.listview.refresh()
-            this.scrollRefresh = false
-          }, 20)
-        }
-      }
     },
     components: {
       Scroll,
@@ -185,7 +154,7 @@
   .swiper {
     overflow: hidden;
     position: relative;
-    height: 4.8rem /* 180/37.5 */;
+    height: 4.53rem /* 170/37.5 */;
   }
   // 分类
   .classify {
@@ -194,61 +163,24 @@
     background-color: #fff;
     .classify-wrap {
       display: flex;
+      flex-wrap: wrap;
+      padding: .16rem /* 6/37.5 */ 0;
       .classify-list {
-        flex: 1;
-        padding: .43rem /* 16/37.5 */ 0;
+        width: 25%;
+        padding: .27rem /* 10/37.5 */;
         font-size: 0;
         text-align: center;
         .classify-i {
           display: inline-block;
           width: 1.36rem /* 51/37.5 */;
           height: 1.36rem /* 51/37.5 */;
-          background-size: 100%;
-          &.classify-a {
-            @include bg-image("../common/img/shouye_a_");
-          }
-          &.classify-s {
-            @include bg-image("../common/img/shouye_s_");
-          }
-          &.classify-k {
-            @include bg-image("../common/img/shouye_k_");
-          }
-          &.classify-q {
-            @include bg-image("../common/img/shouye_q_");
-          }
-          &.classify-x {
-            @include bg-image("../common/img/shouye_x_");
-          }
-        }
-        .classify-p {
-          margin-top: .27rem /* 10/37.5 */;
-          font-size: .43rem /* 16/37.5 */;
-          color: $color-text-d;
-          &.active {
-            color: $color-theme;
-          }
-        }
-      }
-    }
-  }
-  // 浮动的小型分类筛选
-  .classify-fixed {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 3;
-    padding: 0 .43rem /* 16/37.5 */;
-    width: 100%;
-    .classify-wrap {
-      .classify-list {
-        padding: .13rem /* 5/37.5 */;
-        .classify-i {
-          width: .8rem /* 30/37.5 */;
-          height: .8rem /* 30/37.5 */;
+          background-repeat: no-repeat;
+          background-size: cover;
         }
         .classify-p {
           margin-top: .13rem /* 5/37.5 */;
-          font-size: .32rem /* 12/37.5 */;
+          font-size: .43rem /* 16/37.5 */;
+          color: $color-text-d;
         }
       }
     }

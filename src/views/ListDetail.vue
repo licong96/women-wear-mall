@@ -171,6 +171,9 @@
     },
     mounted() {
     },
+    activated() {   // router-view 用了缓存，在这里更新数据
+      console.log('listDetail更新数据')
+    },
     computed: {
       ...mapGetters([
         'swiperFull',

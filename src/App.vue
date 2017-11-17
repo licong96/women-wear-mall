@@ -5,10 +5,10 @@
     <div v-wechat-title="$route.meta.title"></div>
     <!-- <the-header></the-header> -->
     <div class="main">
-      <router-view></router-view>
-      <!-- <keep-alive>
-      慎用缓存
-      </keep-alive> -->
+      <keep-alive>
+        <!-- 用了缓存记得在 activated 更新数据 -->
+        <router-view></router-view>
+      </keep-alive>
     </div>
     <!-- 底部导航 -->
     <the-nav></the-nav>
