@@ -1,4 +1,5 @@
 <template lang="html">
+  <!-- 小球加载中 -->
   <section class="loader">
     <span class="loader loader-quart"></span>
     加载中

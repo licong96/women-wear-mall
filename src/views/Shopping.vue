@@ -1,7 +1,7 @@
 <template lang="html">
   <!-- 购物车 -->
   <section class="shopping">
-    <list-order :checkbox="checkbox" :toggle-all="toggleAll" @order-all="orderAll"></list-order>
+    <list-order :data="oneData" :checkbox="checkbox" :toggle-all="toggleAll" @order-all="orderAll"></list-order>
     <!-- 结算 -->
     <div class="settle">
       <div class="check-box" @click="_checkAll">
@@ -20,24 +20,49 @@
 
 <script>
   import ListOrder from '@/components/ListOrder'
+  import {mapMutations, mapGetters} from 'vuex'
+  import {getList} from '@/api/list'
 
   export default {
     data() {
       return {
+        oneData: [],
         checkbox: true,     // 组件显示复选框
         toggleAll: false   // 全选
       }
     },
     created() {
+      this._getListNoe()
+    },
+    computed: {
+      ...mapGetters([
+        'selectSpecification'
+      ])
     },
     methods: {
-      _checkAll() {
+      _getListNoe() {    // 拿第一条数据先填上
+        getList().then((res) => {
+          console.log(res)
+          let one = res.result.wall.docs[0]
+          this.setSelectSpecification({
+            color: '黑色',
+            size: 'M',
+            value: 1
+          })
+          one.select = this.selectSpecification
+          this.oneData.push(one)
+        })
+      },
+      _checkAll() {   // 全选
         this.toggleAll = !this.toggleAll
       },
       orderAll(val) {
         console.log(val)
         this.toggleAll = val
-      }
+      },
+      ...mapMutations({
+        'setSelectSpecification': 'SET_SELECT_SPECIFICATION'
+      })
     },
     components: {
       ListOrder

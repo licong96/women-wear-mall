@@ -9,7 +9,7 @@
             <img class="my-img" src="https://img11.360buyimg.com/jdphoto/s120x122_jfs/t5683/191/7076936752/5123/834e5571/596dd62bN7a8affc5.png" alt="">
           </div>
           <div class="my-head-text">
-            <p class="my-username">用户名</p>
+            <p class="my-username">开发中...</p>
             <p class="my-phone">13699531996</p>
           </div>
           <div class="my-header-cash">

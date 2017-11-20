@@ -1,6 +1,10 @@
 <template lang="html">
   <!-- 首页 -->
   <section class="home">
+    <!-- 加载中 -->
+    <transition name="opacity">
+      <loading v-show="!commodity.length"></loading>
+    </transition>
     <!-- 滚动 -->
     <div class="home _effect">
       <scroll :data="commodity" ref="listview">
@@ -45,6 +49,7 @@
 </template>
 
 <script>
+  import Loading from '@/components/Loading'
   import Swiper from '@/components/Swiper'
   import Scroll from '@/components/Scroll'
   import ListHome from '@/components/ListHome'
@@ -139,6 +144,7 @@
       }
     },
     components: {
+      Loading,
       Scroll,
       Swiper,
       // CommodityText,
