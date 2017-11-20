@@ -16,7 +16,8 @@ export default new Router({
       path: '/list',
       name: 'list',
       meta: {
-        title: '首页'
+        title: '首页',
+        keepAlive: true // 需要被缓存
       },
       component: resolve => require(['@/views/List'], resolve),
       children: [
@@ -24,17 +25,29 @@ export default new Router({
           path: 'classify/:id',
           name: 'classify',
           meta: {
-            title: '分类'
+            title: '分类',
+            keepAlive: true // 需要被缓存
           },
           components: {
             detail: resolve => require(['@/views/ListClassify'], resolve)
-          }
+          },
+          children: [
+            {
+              path: 'detail/:id',
+              meta: {
+                title: '商品详情',
+                keepAlive: true // 需要被缓存
+              },
+              component: ListDetail
+            }
+          ]
         },
         {
           path: 'detail/:id',
           name: 'listdetail',
           meta: {
-            title: '商品详情'
+            title: '商品详情',
+            keepAlive: true // 不需要被缓存
           },
           // component: ListDetail,
           components: {
@@ -45,14 +58,16 @@ export default new Router({
               path: 'comment',
               name: 'Listdetailcomment',
               meta: {
-                title: '更多评论'
+                title: '更多评论',
+                keepAlive: true // 不需要被缓存
               },
               component: ListDetailComment
             },
             {
               path: 'info',
               meta: {
-                title: '客服'
+                title: '客服',
+                keepAlive: true // 不需要被缓存
               },
               component: resolve => require(['@/views/ListDetailInfo'], resolve)
             },
@@ -73,6 +88,7 @@ export default new Router({
                 },
                 {
                   path: 'submitorder',
+                  name: 'submitorder',
                   meta: {
                     title: '订单已提交'
                   },
@@ -97,7 +113,8 @@ export default new Router({
       path: '/shopping',
       name: 'shopping',
       meta: {
-        title: '购物车'
+        title: '购物车',
+        keepAlive: true // 需要被缓存
       },
       component: resolve => require(['@/views/Shopping'], resolve)
     },
@@ -105,49 +122,56 @@ export default new Router({
       path: '/mycenter',
       name: 'mycenter',
       meta: {
-        title: '个人中心'
+        title: '个人中心',
+        keepAlive: true // 需要被缓存
       },
       component: resolve => require(['@/views/MyCenter'], resolve),
       children: [
         {
           path: 'cash',
           meta: {
-            title: '我的余额'
+            title: '我的余额',
+            keepAlive: true // 需要被缓存
           },
           component: resolve => require(['@/views/my/Cash'], resolve)
         },
         {
           path: 'collect',
           meta: {
-            title: '我的收藏'
+            title: '我的收藏',
+            keepAlive: true // 需要被缓存
           },
           component: resolve => require(['@/views/my/Collect'], resolve)
         },
         {
           path: 'message',
           meta: {
-            title: '我的信息'
+            title: '我的信息',
+            keepAlive: true // 需要被缓存
           },
           component: resolve => require(['@/views/my/Message'], resolve)
         },
         {
           path: 'friend',
           meta: {
-            title: '我的好友'
+            title: '我的好友',
+            keepAlive: true // 需要被缓存
           },
           component: resolve => require(['@/views/my/Friend'], resolve)
         },
         {
           path: 'location',
           meta: {
-            title: '收货地址'
+            title: '收货地址',
+            keepAlive: true // 需要被缓存
           },
           component: resolve => require(['@/views/my/Location'], resolve),
           children: [
             {
               path: 'form',
               meta: {
-                title: '收货地址'
+                title: '收货地址',
+                keepAlive: true // 需要被缓存
               },
               component: resolve => require(['@/views/my/LocationForm'], resolve)
             }
@@ -156,7 +180,8 @@ export default new Router({
         {
           path: 'orderbox',   // 我的订单
           meta: {
-            title: '我的订单'
+            title: '我的订单',
+            keepAlive: true // 需要被缓存
           },
           component: resolve => require(['@/views/order/OrderBox'], resolve),
           children: [
@@ -164,7 +189,8 @@ export default new Router({
               path: 'all',
               name: 'all',
               meta: {
-                title: '全部订单'
+                title: '全部订单',
+                keepAlive: true // 需要被缓存
               },
               components: {   // 命名视图
                 main: resolve => require(['@/views/order/All'], resolve)
@@ -174,7 +200,8 @@ export default new Router({
               path: 'deliver',
               name: 'deliver',
               meta: {
-                title: '待发货'
+                title: '待发货',
+                keepAlive: true // 需要被缓存
               },
               components: {
                 main: resolve => require(['@/views/order/Deliver'], resolve)
@@ -184,7 +211,8 @@ export default new Router({
               path: 'take',
               name: 'take',
               meta: {
-                title: '待收货'
+                title: '待收货',
+                keepAlive: true // 需要被缓存
               },
               components: {
                 main: resolve => require(['@/views/order/Take'], resolve)
@@ -194,7 +222,8 @@ export default new Router({
               path: 'remain',
               name: 'remain',
               meta: {
-                title: '待评价'
+                title: '待评价',
+                keepAlive: true // 需要被缓存
               },
               components: {
                 main: resolve => require(['@/views/order/Remain'], resolve)
@@ -204,7 +233,8 @@ export default new Router({
               path: 'after',
               name: 'after',
               meta: {
-                title: '售后'
+                title: '售后',
+                keepAlive: true // 需要被缓存
               },
               components: {
                 main: resolve => require(['@/views/order/After'], resolve)
@@ -214,7 +244,8 @@ export default new Router({
               path: 'return',
               name: 'return',
               meta: {
-                title: '退货'
+                title: '退货',
+                keepAlive: true // 需要被缓存
               },
               components: {
                 else: resolve => require(['@/views/order/OrderReturn'], resolve)
@@ -223,14 +254,16 @@ export default new Router({
                 {
                   path: 'audit',
                   meta: {
-                    title: '等待审核'
+                    title: '等待审核',
+                    keepAlive: true // 需要被缓存
                   },
                   component: resolve => require(['@/views/state/Audit'], resolve),
                   children: [
                     {
                       path: 'afterdetails',
                       meta: {
-                        title: '退货详情'
+                        title: '退货详情',
+                        keepAlive: true // 需要被缓存
                       },
                       component: resolve => require(['@/views/order/AfterDetails'], resolve)
                     }
@@ -241,7 +274,8 @@ export default new Router({
             {
               path: 'succeed',    // 确认收货
               meta: {
-                title: '交易成功'
+                title: '交易成功',
+                keepAlive: true // 需要被缓存
               },
               components: {
                 else: resolve => require(['@/views/state/Succeed'], resolve)
@@ -250,14 +284,16 @@ export default new Router({
                 {
                   path: 'evaluate',
                   meta: {
-                    title: '评价'
+                    title: '评价',
+                    keepAlive: true // 需要被缓存
                   },
                   component: resolve => require(['@/views/order/RemainEvaluate'], resolve),
                   children: [
                     {
                       path: 'stateevaluate',
                       meta: {
-                        title: '评分完成'
+                        title: '评分完成',
+                        keepAlive: true // 需要被缓存
                       },
                       component: resolve => require(['@/views/state/Evaluate'], resolve)
                     }

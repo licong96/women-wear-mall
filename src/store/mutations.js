@@ -1,6 +1,9 @@
 import * as types from './mutations-type'
 
 const matutaions = {
+  [types.SET_LIST_DETAIL](state, listDetail) {
+    state.listDetail = listDetail
+  },
   [types.SET_ROUTER_ANIM](state, routerAnim) {
     state.routerAnim = routerAnim
   },

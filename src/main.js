@@ -5,8 +5,10 @@ import App from './App'
 import router from './router'
 import store from './store'
 import axios from 'axios'
+import localStorage from 'store'
 import libFlexible from 'lib-flexible'
 import FastClick from 'fastclick'
+import VueLazyload from 'vue-lazyload'
 import Waves from 'node-waves'
 
 import 'swiper/dist/css/swiper.css'   // 轮播样式
@@ -16,9 +18,16 @@ import '@/common/sass/index.scss'
 
 Vue.config.productionTip = false
 Vue.prototype.axios = axios
+Vue.prototype.localStorage = localStorage
 
 Vue.use(libFlexible)                // 计算 rem
 Vue.use(require('vue-wechat-title'))
+
+Vue.use(VueLazyload, {    // 图片懒加载
+  preLoad: 1.3,
+  error: './common/img/404.png',
+  loading: require('@/common/img/loader.png')
+})
 Waves.init()                        // 波纹点击效果初始化
 //   按钮class         waves-effect waves-button
 //

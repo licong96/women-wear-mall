@@ -26,22 +26,18 @@
         </div>
       </div>
       <!-- 列表 -->
-      <div class="commodity clearfix">
-        <div class="commodity-list" v-for="item in commodity" :key="item.id" @click="openDetail(item.id)">
-          <img class="commodity-img" :src="item.src" alt="">
-          <div class="commodity-text">
-            <commodity-text></commodity-text>
-          </div>
-        </div>
-      </div>
+      <section class="commodity">
+        <list-home :data="commodity" @page="openDetail"></list-home>
+      </section>
     </div>
     </scroll>
   </section>
 </template>
 
 <script>
-  import CommodityText from '@/components/CommodityText'
+  import ListHome from '@/components/ListHome'
   import Scroll from '@/components/Scroll'
+  import {getList} from '@/api/list'
   import {prefixStyle} from '@/common/js/dom'
   import {mapMutations} from 'vuex'
 
@@ -70,10 +66,13 @@
         // console.log(pos.y)
         this.scrollY = pos.y
       },
-      openDetail(id) {      // 打开信息页
+      openDetail(item) {      // 打开信息页
+        this.setListDetail(item)
         this.$router.push({
-          path: `/list/detail/${id}`
+          path: `/list/detail/${item.iid}`
         })
+      },
+      refreshs() {    // 重新渲染
       },
       _collect() {
         this.iconCollect = !this.iconCollect
@@ -92,16 +91,10 @@
         }
       },
       _getListData() {  // 获取首页列表数据
-        this.axios.get('/api/list')
-          .then((response) => {
-            this.commodity = response.data.commodity
-            setTimeout(() => {
-              // this.$refs.listview.refresh()
-            }, 20)
-          })
-          .catch(function(error) {
-            console.log(error)
-          })
+        getList().then((res) => {
+          console.log(res)
+          this.commodity = res.result.wall.docs
+        })
       },
       _openPageInfo(id) {
         this.$router.push({
@@ -109,7 +102,8 @@
         })
       },
       ...mapMutations({
-        setAlertHint: 'SET_ALERT_HINT'
+        setAlertHint: 'SET_ALERT_HINT',
+        setListDetail: 'SET_LIST_DETAIL'
       })
     },
     watch: {
@@ -127,7 +121,7 @@
       }
     },
     components: {
-      CommodityText,
+      ListHome,
       Scroll
     }
   }
@@ -138,7 +132,7 @@
   @import "../common/sass/mixin";
 
   .store {
-    background-color: #fff;
+    background: $color-background-e;
     .bg-wrap {
       overflow: hidden;
       position: absolute;
@@ -229,29 +223,8 @@
     }
     // 列表
     .commodity {
-      padding-top: .27rem /* 10/37.5 */;
-      background: #fff;
-    }
-    .commodity-list {
-      overflow: hidden;
-      float: left;
-      position: relative;
-      padding: 0 .05rem /* 2/37.5 */;
-      margin: .05rem /* 2/37.5 */ 0;
-      width: 50%;
-      height: 7.33rem /* 275/37.5 */;
-      .commodity-img {
-        display: block;
-        width: 100%;
-      }
-      .commodity-text {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        padding: .21rem /* 8/37.5 */ .16rem /* 6/37.5 */;
-        width: 100%;
-        background-color: rgba(255, 255, 255, .7);
-      }
+      padding-bottom: .27rem /* 10/37.5 */;
+      background: $color-background-e;
     }
   }
 </style>

@@ -1,3 +1,5 @@
+export const listDetail = state => state.listDetail
+
 export const routerAnim = state => state.routerAnim
 
 export const selectSizeColor = state => state.selectSizeColor

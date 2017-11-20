@@ -11,11 +11,9 @@
     <div class="main">
       <scroll ref="scroll">
         <div>
-          <keep-alive>
-            <transition :name="transition">
-              <router-view name="main" @scrolls="scrolls"></router-view>
-            </transition>
-          </keep-alive>
+          <transition :name="transition">
+            <router-view name="main" @scrolls="scrolls"></router-view>
+          </transition>
         </div>
       </scroll>
     </div>
@@ -29,6 +27,14 @@
 </template>
 
 <script>
+  /**
+  * 订单放在本地存储
+  * 不同的状态有不同的字段，每个订单添加一个 state
+  * state: 0 待发货
+  * state: 1 待收货
+  * state: 2 待评价
+  * state: 3 售后
+  **/
   import Scroll from '@/components/Scroll'
   import {mapGetters, mapMutations} from 'vuex'
 
@@ -40,6 +46,9 @@
       })
     },
     beforeRouteLeave(to, from, next) {  // 离开是 false
+      if (to.name === 'submitorder') {    // 如果离开到订单页去，就去掉动画，个人中心进入，动画冲突
+        this.setRouterAnim(false)
+      }
       this.$emit('destroy', false)
       next()
     },

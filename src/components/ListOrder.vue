@@ -14,23 +14,23 @@
         </p>
       </div>
       <!-- 列表 -->
-      <div class="order-body" @click="_openList(0)">
+      <div class="order-body" v-for="item in data" @click="_openList(0)">
         <!-- 选择框，购物车组件才用的到 -->
         <input type="checkbox" name="c-all" class="checkout-all" value="id0" v-model="checkAll" v-show="checkbox" :class="{'checked': checkAll}" @click.stop>
         <div class="order-img-wrap">
-          <img class="order-img" src="https://s2.mogucdn.com/mlcdn/c45406/171019_45i2j10h7e27554a5hi1d942i63ll_640x960.jpg" alt="">
+          <img class="loadimg order-img" v-lazy="item.img"/>
         </div>
         <div class="order-text-wrap">
-          <p class="order-text">2017秋冬季新款大码女装韩版女士宽松打底针织衫女套头半高领毛衣女外套</p>
+          <p class="order-text">{{item.title}}</p>
           <div class="order-parameter">
-            颜色：<span class="order-pd">白色</span>
-            尺码：<span class="order-pd">L</span>
-            <span class="order-quantity">x1</span>
+            颜色：<span class="order-pd">{{item.select.color}}</span>
+            尺码：<span class="order-pd">{{item.select.size}}</span>
+            <span class="order-quantity">x{{item.select.value}}</span>
           </div>
         </div>
         <div class="order-money">
-          <span class="member"><i class="member-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-renminbi"></use></svg></i>500</span>
-          <s class="original"><i><svg class="icon" aria-hidden="true"><use xlink:href="#icon-renminbi"></use></svg></i>700</s>
+          <span class="member"><i class="member-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-renminbi"></use></svg></i>{{item.price}}</span>
+          <s class="original"><i><svg class="icon" aria-hidden="true"><use xlink:href="#icon-renminbi"></use></svg></i>{{item.orgPrice}}</s>
         </div>
       </div>
     </div>
@@ -40,6 +40,10 @@
 <script>
   export default {
     props: {
+      data: {       // 数据
+        type: Array,
+        default: []
+      },
       checkbox: {   // 是否显示选框，购物车才用的到
         type: Boolean,
         default: false
@@ -59,6 +63,9 @@
         cheack: [],       // 当前选中的
         checkData: []
       }
+    },
+    created() {
+      console.log(this.data)
     },
     methods: {
       checkOne(id) {    // 当前选中

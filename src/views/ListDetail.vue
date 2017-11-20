@@ -2,7 +2,7 @@
   <!-- 首页 -->
   <section class="full-fixed list-detail">
     <transition name="list-header">
-      <header class="list-header" v-show="titleShow">
+      <header class="max-center list-header" v-show="titleShow">
         <div class="top">
           <i class="iconfont"></i>
           <div class="head-wrap">
@@ -22,18 +22,33 @@
       </header>
     </transition>
     <!-- 滚动内容 -->
-    <scroll class="recommend-content" :data="swiperData" :probe-type="probeType" :listem-scroll="listemScroll"  @scroll="scroll" ref="listview">
+    <scroll class="recommend-content" :data="commentData" :probe-type="probeType" :listem-scroll="listemScroll"  @scroll="scroll" ref="listview">
       <!-- 空标签是滑动容器，删掉就完蛋 -->
       <section>
         <div class="basic" ref="basic">
           <!-- 轮播组件 -->
           <div class="swiper">
-            <swiper :swiper-data="swiperData" :autoplay="autoplay"></swiper>
+            <img :src="listDetail.img" style="width: 100%;" alt="">
           </div>
           <!-- 商品标题和价格 -->
           <div class="commodity-text">
-            <commodity-text :title-style="titleStyle"></commodity-text>
-            <span class="freight">快递：免运费</span>
+            <!-- <commodity-text :title-style="titleStyle" :data="listDetail"></commodity-text> -->
+            <h3 class="title">{{listDetail.title}}</h3>
+            <div class="tags">
+              <span class="title-tag" v-for="tag in listDetail.props">{{tag}}</span>
+            </div>
+            <div class="price-wrap">
+              <span class="price">
+                <i class="icon-renminbi"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-renminbi"></use></svg></i>{{listDetail.price}}
+              </span>
+              <s class="orgPrice">
+                <i class="icon-renminbi"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-renminbi"></use></svg></i>{{listDetail.orgPrice}}
+              </s>
+            </div>
+            <div class="food-text">
+              <span class="freight">快递：免运费</span>
+              <span class="freight">月销量 {{listDetail.sale}}</span>
+            </div>
           </div>
           <div class="hr-10"></div>
         </div>
@@ -51,6 +66,7 @@
           <div class="list-conster parameter" ref="listGroup0">
             <div class="hr-10"></div>
             <ul class="parameter-wrap">
+              <li class="parameter-list bad">详细页数据有签名限制，抓取不到，只能模拟</li>
               <li class="parameter-list" v-for="(item, index) in parameterData" :key="index">
                 <span class="parameter-title">{{item.title}}</span>
                 <span class="parameter-desc">{{item.desc}}</span>
@@ -60,7 +76,7 @@
           <!-- 图片详情 -->
           <div class="list-conster particulars" ref="listGroup1">
             <div class="hr-10"></div>
-            <img class="particulars-img" :src="item.src" :key="index" v-for="(item, index) in particularsData" @load="_srcollRefresh">
+            <img class="particulars-img" :src="item" :key="index" v-for="(item, index) in particularsData" @load="_srcollRefresh">
           </div>
           <!-- 用户评论 -->
           <div class="list-conster comment-border" ref="listGroup2">
@@ -74,7 +90,7 @@
       </section>
     </scroll>
     <!-- 底部操作按钮 -->
-    <section class="footer-bar">
+    <section class="max-center footer-bar">
       <ul class="bar-wrap">
         <li class="bar-list" @click="_collect">
           <i class="iconfont" v-show="!iconCollect"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-shoucang1"></use></svg></i>
@@ -139,6 +155,7 @@
         this.setSwiperFull([])
         this.setSwiperFullIndex(0)
       }
+      this.setSelectSizeColor(false)    // 页面关闭的话，关闭选择器
       // this.$emit('destroy', false)
       next()
     },
@@ -146,7 +163,6 @@
       return {
         discList: [],
         specificationData: {},  // 选择商品规格
-        swiperData: [],  // 轮播图
         parameterData: [],    // 参数数据
         particularsData: [],  // 详情数据
         commentData: [],  // 评论数据
@@ -161,11 +177,19 @@
       }
     },
     created() {
+      console.log('created')
+      if (!this.listDetail.img) {   // 没有数据 返回上一页
+        // this.$router.back()
+        this.$router.replace({
+          path: '/list'
+        })
+      } else {
+        this._getListData()
+      }
       this.probeType = 3        // 滚动参数
       this.listemScroll = true
       this.autoplay = 0   // 轮播自动滚动
       this.titleStyle = true    // 控制商品标题价格颜色
-      this._getListData()
       this.path = this.$route.params.id   // 当前商品 id
       console.log('path:', this.path)
     },
@@ -176,6 +200,7 @@
     },
     computed: {
       ...mapGetters([
+        'listDetail',
         'swiperFull',
         'selectSpecification'
       ])
@@ -186,11 +211,14 @@
           .then(function(response) {
             console.log(response.data)
             // this.discList = response.data.discList
-            this.swiperData = response.data.discList.swiper
             this.specificationData = response.data.discList.specification
+            this.specificationData.img = this.listDetail.img   // 选择参数里面，添加一张图片
+            this.specificationData.price = this.listDetail.price   // 选择参数里面，加入价格
+
             this.parameterData = response.data.parameterData
-            this.particularsData = response.data.particularsData
+            // this.particularsData = response.data.particularsData
             this.commentData = response.data.commentData
+            this._particularsData()   // 模拟详细页图片
             setTimeout(() => {
               if (this.$refs.listview) {
                 this.$refs.listview.refresh()
@@ -204,6 +232,12 @@
           .catch(function(error) {
             console.log(error)
           })
+      },
+      _particularsData() {    // 模拟详细页图片
+        let img = this.listDetail.img
+        for (let i = 0; i < 3; i++) {
+          this.particularsData.push(img)
+        }
       },
       scroll(pos) {   // 接收滑动位置
         // console.log(pos.y)
@@ -251,6 +285,7 @@
         let select = this.selectSpecification
         if (!select.color || !select.size) {
           this.setSpecificationData(this.specificationData)
+          console.log(this.specificationData)
           this.setSelectSizeColor(true)     // 显示选择
         } else {
           this.setAlertHint({
@@ -362,7 +397,6 @@
   .list-header {
     position: fixed;
     top: 0;
-    left: 0;
     z-index: 9;
     width: 100%;
     height: 1.2rem /* 45/37.5 */;
@@ -412,12 +446,55 @@
     height: 12rem /* 450/37.5 */;
   }
   .commodity-text {
-    padding: .43rem /* 16/37.5 */;
     background-color: #fff;
-    .freight {
+    padding: .32rem /* 12/37.5 */ .43rem /* 16/37.5 */;
+    .title {
+      font-size: .43rem /* 16/37.5 */;
+      line-height: 1.4;
+      color: $color-text-d;
+    }
+    .tags {
+      overflow: hidden;
+      padding-top: .27rem /* 10/37.5 */;
+      .title-tag {
+        display: inline-block;
+        padding: 0 .08rem /* 3/37.5 */;
+        margin: 0 .08rem /* 3/37.5 */ .08rem /* 3/37.5 */ 0;
+        height: .43rem /* 16/37.5 */;
+        line-height: .43rem /* 16/37.5 */;
+        font-size: .27rem /* 10/37.5 */;
+        color: #6d7d86;
+        background-color: #eff3f6;
+      }
+    }
+    .price-wrap {
       display: flex;
       align-items: center;
       padding-top: .27rem /* 10/37.5 */;
+      .price {
+        font-size: .59rem /* 22/37.5 */;
+        color: $color-theme;
+        .icon-renminbi {
+          font-size: .32rem /* 12/37.5 */;
+        }
+      }
+      .orgPrice {
+        padding-left: .08rem /* 3/37.5 */;
+        font-size: .32rem /* 12/37.5 */;
+        color: $color-text-9;
+      }
+      .sale {
+        font-size: .37rem /* 14/37.5 */;
+        color: $color-text-9;
+      }
+    }
+    .food-text {
+      padding-top: .27rem /* 10/37.5 */;
+      display: flex;
+      align-items: center;
+    }
+    .freight{
+      padding-right: .53rem /* 20/37.5 */;
       font-size: .32rem /* 12/37.5 */;
       color: $color-text-9;
     }
@@ -439,7 +516,10 @@
   }
   // 商品参数
   .parameter {
-    // border-top: .27rem /* 10/37.5 */ solid #eee;
+    .bad {
+      text-align: center;
+      color: $color-theme;
+    }
     .parameter-wrap {
       padding: 0 .43rem /* 16/37.5 */;
       background-color: #fff;
@@ -467,15 +547,13 @@
   // 图片详情
   .particulars {
     font-size: 0;
-    // border-top: .27rem /* 10/37.5 */ solid #eee;
     .particulars-img {
-      display: block;
+      margin-top: .21rem /* 8/37.5 */;
       width: 100%;
     }
   }
   // 评论
   .comment-border {
-    // border-top: .27rem /* 10/37.5 */ solid #eee;
   }
   // 查看更多评论
   .comment-more {
@@ -491,7 +569,6 @@
   .footer-bar {
     position: fixed;
     bottom: -1px;
-    left: 0;
     z-index: 9;
     width: 100%;
     height: 1.36rem /* 51/37.5 */;

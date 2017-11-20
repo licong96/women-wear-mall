@@ -5,10 +5,11 @@
     <div v-wechat-title="$route.meta.title"></div>
     <!-- <the-header></the-header> -->
     <div class="main">
+      <!-- 用了缓存记得在 activated 更新数据 -->
       <keep-alive>
-        <!-- 用了缓存记得在 activated 更新数据 -->
-        <router-view></router-view>
+        <router-view v-if="$route.meta.keepAlive"></router-view>
       </keep-alive>
+      <router-view v-if="!$route.meta.keepAlive"></router-view>
     </div>
     <!-- 底部导航 -->
     <the-nav></the-nav>
@@ -64,7 +65,6 @@
     },
     watch: {},
     components: {
-      // TheHeader,
       TheNav,
       SelectSizeColor,
       Swiper,

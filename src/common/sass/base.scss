@@ -42,15 +42,12 @@ body, html {
 .loadimg[lazy=loaded] {
   animation: loader 1s both;
 }
-
 @keyframes loader {
   from {
     opacity: 0;
-    filter: blur(5px);
   }
   to {
     opacity: 1;
-    filter: blur(0);
   }
 }
 /* loading */
@@ -63,12 +60,20 @@ body, html {
 
 /* 结构布局 */
 .full-fixed {
+  overflow: hidden;
   position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
   z-index: 9;
+  margin: 0 auto;
+  max-width: 600px;
+  width: 100%;
+}
+.max-center {
+  margin: 0 auto;
+  max-width: 600px;
 }
 /* 页面过渡 */
 .transX-enter-active,
@@ -97,7 +102,7 @@ body, html {
 }
 .opacity-enter-active,
 .opacity-leave-active{
-  transition: .3s all ease;
+  transition: .2s all ease;
 }
 .opacity-enter,
 .opacity-leave-to{

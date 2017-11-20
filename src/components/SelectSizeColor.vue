@@ -6,7 +6,7 @@
         <!-- 上面一部分 -->
         <div class="sel-header">
           <div class="sel-img-wrap">
-            <img class="sel-img" src="https://s2.mogucdn.com/mlcdn/c45406/171019_45i2j10h7e27554a5hi1d942i63ll_640x960.jpg" alt="">
+            <img class="sel-img" :src="specificationData.img" alt="">
           </div>
           <div class="sel-text">
             <h3 class="sel-money">
@@ -14,7 +14,7 @@
                 <svg class="icon" aria-hidden="true">
                   <use xlink:href="#icon-renminbi"></use>
                 </svg>
-              </i><span>199.00</span>
+              </i><span>{{specificationData.price}}</span>
             </h3>
             <!-- <p class="sel-inventory">库存10件</p> -->
             <div class="sel-color-size">
@@ -100,7 +100,7 @@
         } else {
           this.colorIndex = index
           this.select.color = text
-          this.setSelectSpecification(this.select)    // 修改后，存到状态管理
+          this.setSelectSpecification(this.select)    // 保存选项，修改后，存到状态管理
         }
       },
       _onSize(text, index) {  // 选择尺寸
@@ -120,10 +120,12 @@
           this.quantity = 1
         }
         this.select.value = this.quantity
+        this.setSelectSpecification(this.select)
       },
       _add() {
         this.quantity++
         this.select.value = this.quantity
+        this.setSelectSpecification(this.select)
       },
       _selectHide() {   // 隐藏商品选择颜色尺寸
         this.setSelectSizeColor(false)

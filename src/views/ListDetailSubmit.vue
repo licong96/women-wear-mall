@@ -1,16 +1,16 @@
 <template lang="html">
   <!-- 确认订单 -->
-  <div class="full-fixed">
+  <div class="full-fixed list-submit-wrap">
     <section class="full-fixed list-submit _effect" :class="{'_effect-30': decline}">
       <div class="mini-height">
-        <list-order :click="clickNO"></list-order>
+        <list-order :click="clickNO" :data="listOrderDetail"></list-order>
         <div class="leave-msg">
           <textarea class="leave-textarea" cols="30" rows="1" placeholder="给商家留言"></textarea>
         </div>
       </div>
       <div class="submit-footer">
         <div class="total">
-          共<span class="total-num">1</span>件商品，总金额：<i class="total-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-renminbi"></use></svg></i><span class="total-money">500</span>
+          共<span class="total-num">{{selectSpecification.value}}</span>件商品，总金额：<i class="total-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-renminbi"></use></svg></i><span class="total-money">{{total}}</span>
         </div>
         <div class="select-btn">
           <p class="waves-effect waves-light deliver" @click="_deliver">快递发货</p>
@@ -45,6 +45,8 @@
 
 <script>
   import ListOrder from '@/components/ListOrder'
+  import {mapGetters} from 'vuex'
+
   export default {
     data() {
       return {
@@ -53,7 +55,22 @@
       }
     },
     created() {
-      this.clickNO = false    // 不允许点击
+      this.clickNO = false    // 不允许点击打开详细页
+    },
+    computed: {
+      listOrderDetail() {   // 把对象变成一个数组，传过去，为的是兼容购物车组件调用
+        let arr = []
+        this.listDetail.select = this.selectSpecification
+        arr.push(this.listDetail)
+        return arr
+      },
+      total() {   // 总价
+        return this.selectSpecification.value * this.listDetail.price
+      },
+      ...mapGetters([
+        'listDetail',
+        'selectSpecification'
+      ])
     },
     methods: {
       destroy(booleans) {   // 页面过渡
@@ -65,6 +82,15 @@
         this.$router.replace({
           path: `/list/detail/1/submit/submitorder`
         })
+        // 订单提交后，用本地存储保存起来
+        this.orderStore()
+      },
+      orderStore() {
+        let order = this.localStorage.get('order') || []     // 先获取，后存储
+        console.log(order)
+        order.push(this.listOrderDetail[0])     // 因为上面已经把他变成一个数组了
+        console.log(order)
+        this.localStorage.set('order', order)
       },
       _openLocation() {   // 打开收货地址
         this.$router.push({
@@ -95,6 +121,9 @@
   .full-fixed {
     overflow: hidden;
     z-index: 10;
+  }
+  .list-submit-wrap {
+    background: $color-background-e;
   }
   .mini-height {
     // min-height: 100%;
@@ -158,6 +187,9 @@
         background-color: $color-theme;
       }
     }
+  }
+  .submit-footer {
+    background-color: #fff;
   }
   // 收货地址
   .deliver-mask {

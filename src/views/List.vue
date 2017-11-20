@@ -19,21 +19,21 @@
               </li>
             </ul>
           </section>
-          <!-- 列表 -->
-          <div class="commodity clearfix">
-            <div class="commodity-list" v-for="item in commodity" :key="item.itemId" @click="openDetail(item.itemId)">
-              <img class="commodity-img" :src="item.img" alt="" @load="refreshs">
-              <div class="commodity-text">
-                <commodity-text :data="item"></commodity-text>
-              </div>
-            </div>
-          </div>
+          <section class="hot-title">
+            <i class="line"></i>
+            <span class="text">热门推荐</span>
+            <i class="line"></i>
+          </section>
+          <!-- 商品列表 -->
+          <section class="commodity">
+            <list-home :data="commodity" @page="openDetail" @refresh="refreshs"></list-home>
+          </section>
         </div>
       </scroll>
     </div>
     <!-- 详细页 -->
     <transition :name="transition">
-      <router-view name="detail" @destroy="destroy"></router-view>
+      <router-view name="detail"></router-view>
     </transition>
     <router-view name="store"></router-view>
     <!-- <transition name="transX">
@@ -47,7 +47,7 @@
 <script>
   import Swiper from '@/components/Swiper'
   import Scroll from '@/components/Scroll'
-  import CommodityText from '@/components/CommodityText'
+  import ListHome from '@/components/ListHome'
   import {mapMutations, mapGetters} from 'vuex'
   import {getHome, getList} from '@/api/list'
   import {getQueryString} from '@/common/js/dom'
@@ -84,11 +84,12 @@
       ])
     },
     methods: {
-      openDetail(id) {    // 打开详细页
-        this.setRouterAnim(true)
+      openDetail(item) {    // 打开详细页
+        this.setRouterAnim(true)      // 路由动画
         this.$router.push({
-          path: `/list/detail/${id}`
+          path: `/list/detail/${item.iid}`
         })
+        this.setListDetail(item)
       },
       _openClassify(id) {   // 打开分类列表页
         this.setRouterAnim(true)
@@ -99,25 +100,23 @@
       destroy(msg) {
         console.log('list：' + msg)
       },
-      refreshs() {    // 重新计算滚动，只执行一次
-        if (this.refreshTime) {
-          clearTimeout(this.refreshTime)
-        }
-        this.refreshTime = setTimeout(() => {
-          this.$refs.listview.refresh()
-        }, 20)
+      refreshs() {    // 重新计算滑动
+        this.$refs.listview.refresh()
       },
       _getHome() {  // 首页数据
         getHome().then((res) => {
-          console.log(res)
-          this.swiperData = res.data[51822].list      // 轮播
-          // this.screens = res.data[51836].list      // 筛选
-          let arr = []
-          res.data[51836].list.forEach((item) => {    // 手动添加 fcid筛选
-            item.fcid = getQueryString(item.link, 'fcid')
-            arr.push(item)
+          // console.log(res)
+          let swiperScr = res.data[51822].list      // 轮播
+          swiperScr.forEach((item) => {   // 手动添加scr
+            item.src = item.image_800
+            this.swiperData.push(item)
           })
-          this.screens = arr
+          // this.screens = res.data[51836].list      // 筛选
+          let fcidArr = res.data[51836].list
+          fcidArr.forEach((item) => {    // 手动添加 fcid筛选
+            item.fcid = getQueryString(item.link, 'fcid')
+            this.screens.push(item)
+          })
         })
       },
       _getList() {    // 首页列表数据
@@ -130,15 +129,20 @@
         return `background-image: url(${img})`
       },
       ...mapMutations({             // 设置
+        setListDetail: 'SET_LIST_DETAIL',
         setRouterAnim: 'SET_ROUTER_ANIM'
       })
     },
     watch: {
+      routerAnim(newValue) {
+        console.log('页面过渡routerA', newValue)
+      }
     },
     components: {
       Scroll,
       Swiper,
-      CommodityText
+      // CommodityText,
+      ListHome
     }
   }
 </script>
@@ -146,9 +150,10 @@
 <style scoped lang="scss">
   @import "../common/sass/variable";
   @import "../common/sass/mixin";
+
   .home {
     height: 100%;
-    background-color: #fff;
+    background-color: $color-background-e;
   }
   // 轮播组件高度
   .swiper {
@@ -185,30 +190,24 @@
       }
     }
   }
-  // 列表
-  .commodity {
-    padding: .27rem /* 10/37.5 */ 0 1.44rem /* 54/37.5 */ 0;
+  .hot-title {
+    display: flex;
+    align-items: center;
+    width: 80%;
+    margin: .53rem /* 20/37.5 */ auto;
+    .line {
+      flex: 1;
+      @include border-b-1px(0);
+    }
+    .text {
+      padding: 0 .21rem /* 8/37.5 */;
+      font-weight: 700;
+      font-size: .37rem /* 14/37.5 */;
+      color: $color-text-6;
+    }
   }
-  .commodity-list {
-    overflow: hidden;
-    float: left;
-    position: relative;
-    padding: 0 .05rem /* 2/37.5 */;
-    margin: .05rem /* 2/37.5 */ 0;
-    width: 50%;
-    height: 7.33rem /* 275/37.5 */;
-    .commodity-img {
-      display: block;
-      width: 100%;
-    }
-    .commodity-text {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      padding: .21rem /* 8/37.5 */ .16rem /* 6/37.5 */;
-      width: 100%;
-      background-color: rgba(255, 255, 255, .7);
-    }
+  .commodity {
+    padding-bottom: 1.6rem /* 60/37.5 */;
   }
   // 分类筛选过渡
   .classify-enter-active,

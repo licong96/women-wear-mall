@@ -55,7 +55,8 @@
     align-items: center;
     position: fixed;
     bottom: 1.33rem /* 50/37.5 */;
-    left: 0;
+    margin: 0 auto;
+    max-width: 600px;
     width: 100%;
     height: 1.2rem /* 45/37.5 */;
     background-color: #fff;

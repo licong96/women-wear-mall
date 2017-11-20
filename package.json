@@ -21,6 +21,7 @@
     "lib-flexible": "^0.3.2",
     "mockjs": "^1.0.1-beta3",
     "node-waves": "^0.7.5",
+    "store": "^2.0.12",
     "swipejs": "^2.2.10",
     "vue": "^2.5.2",
     "vue-awesome-swiper": "^2.6.7",

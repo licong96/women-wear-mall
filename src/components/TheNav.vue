@@ -65,6 +65,8 @@
       left: 0;
       right: 0;
       z-index: 5;
+      margin: 0 auto;
+      max-width: 600px;
       width: 100%;
       height: 1.33rem /* 50/37.5 */;
       background-color: #fff;

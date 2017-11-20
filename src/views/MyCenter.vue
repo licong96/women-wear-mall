@@ -75,21 +75,32 @@
       </div>
     </div>
     <!-- 子页面 -->
-    <transition name="transX">
+    <transition :name="transition">
       <router-view @destroy="destroy"></router-view>
     </transition>
   </section>
 </template>
 
 <script>
+  import {mapMutations, mapGetters} from 'vuex'
+
   export default {
     data() {
       return {
         decline: false
       }
     },
+    computed: {
+      transition() {
+        return this.routerAnim ? 'transX' : ''
+      },
+      ...mapGetters([
+        'routerAnim'
+      ])
+    },
     methods: {
       _openPage(page) {   // 打开新页面
+        this.setRouterAnim(true)
         this.$router.push({
           path: `/mycenter/${page}`
         })
@@ -98,7 +109,10 @@
         setTimeout(() => {
           this.decline = booleans
         }, 30)
-      }
+      },
+      ...mapMutations({             // 设置
+        setRouterAnim: 'SET_ROUTER_ANIM'
+      })
     },
     components: {
     }

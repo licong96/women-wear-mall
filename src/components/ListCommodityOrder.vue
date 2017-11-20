@@ -41,7 +41,7 @@
 
 <script>
   import {mapMutations} from 'vuex'
-  
+
   export default {
     props: {
       listData: {
@@ -53,6 +53,7 @@
     },
     methods: {
       _openList(id) {   // 打开商品详情页
+        this.setRouterAnim(false)
         this.$router.push({
           path: `/list/detail/${id}`
         })
