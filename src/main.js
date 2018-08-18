@@ -1,34 +1,34 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-import Vue from 'vue'
-import App from './App'
-import router from './router'
-import store from './store'
-import axios from 'axios'
-import localStorage from 'store'
-import libFlexible from 'lib-flexible'
-import FastClick from 'fastclick'
-import VueLazyload from 'vue-lazyload'
-import Waves from 'node-waves'
+import Vue from 'vue';
+import App from './App';
+import router from './router';
+import store from './store';
+import axios from 'axios';
+import localStorage from 'store';
+import libFlexible from 'lib-flexible';
+import FastClick from 'fastclick';
+import VueLazyload from 'vue-lazyload';
+import Waves from 'node-waves';
 
-import 'swiper/dist/css/swiper.css'   // 轮播样式
-import '@/common/sass/waves.scss'     // 波纹样式
-import '@/common/stylus/base.styl'
-import '@/common/sass/index.scss'
+import 'swiper/dist/css/swiper.css';   // 轮播样式
+import '@/common/sass/waves.scss';     // 波纹样式
+import '@/common/stylus/base.styl';
+import '@/common/sass/index.scss';
 
-Vue.config.productionTip = false
-Vue.prototype.axios = axios
-Vue.prototype.localStorage = localStorage
+Vue.config.productionTip = false;
+Vue.prototype.axios = axios;
+Vue.prototype.localStorage = localStorage;
 
-Vue.use(libFlexible)                // 计算 rem
-Vue.use(require('vue-wechat-title'))
+Vue.use(libFlexible);                // 计算 rem;
+Vue.use(require('vue-wechat-title'));
 
-Vue.use(VueLazyload, {    // 图片懒加载
+Vue.use(VueLazyload, {    // 图片懒加载;
   preLoad: 1.3,
   error: './common/img/404.png',
   loading: require('@/common/img/loader.png')
 })
-Waves.init()                        // 波纹点击效果初始化
+Waves.init();   // 波纹点击效果初始化;
 //   按钮class         waves-effect waves-button
 //
 //   图标class         waves-effect waves-circle
@@ -41,12 +41,12 @@ Waves.init()                        // 波纹点击效果初始化
 
 if ('addEventListener' in document) { // 解决移动端300毫秒延迟
   document.addEventListener('DOMContentLoaded', function() {
-    FastClick.attach(document.body)
+    FastClick.attach(document.body);
   }, false)
 }
 
 // 模拟数据
-require('./api/api.js')
+require('./api/api.js');
 
 /* eslint-disable no-new */
 new Vue({

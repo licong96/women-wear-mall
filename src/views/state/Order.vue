@@ -23,16 +23,18 @@
       return {
       }
     },
+    created() {
+    },
     computed: {
     },
     methods: {
       _openOrder() {
-        this.$router.push({
-          path: `/mycenter/orderbox/all`
+        this.$router.replace({
+          path: '/mycenter/orderbox/all'
         })
       },
       _home() {
-        this.$router.push({
+        this.$router.replace({
           path: '/list'
         })
       }

@@ -61,7 +61,7 @@
         <!-- 底部按钮 -->
         <div class="footer-bar">
           <p class="bar-yellow" @click="_addCart">加入购物车</p>
-          <p class="bar-red" @click="_addMember">加入会员</p>
+          <p class="bar-red" @click="_addMember">立即购买</p>
         </div>
       </div>
     </section>
@@ -100,7 +100,7 @@
         } else {
           this.colorIndex = index
           this.select.color = text
-          this.setSelectSpecification(this.select)    // 保存选项，修改后，存到状态管理
+          this.$emit('setSelect', this.select)
         }
       },
       _onSize(text, index) {  // 选择尺寸
@@ -110,7 +110,7 @@
         } else {
           this.sizeIndex = index
           this.select.size = text
-          this.setSelectSpecification(this.select)
+          this.$emit('setSelect', this.select)
         }
       },
       _subtract() { // 数量减
@@ -120,15 +120,15 @@
           this.quantity = 1
         }
         this.select.value = this.quantity
-        this.setSelectSpecification(this.select)
+        this.$emit('setSelect', this.select)
       },
       _add() {
         this.quantity++
         this.select.value = this.quantity
-        this.setSelectSpecification(this.select)
+        this.$emit('setSelect', this.select)
       },
       _selectHide() {   // 隐藏商品选择颜色尺寸
-        this.setSelectSizeColor(false)
+        this.$emit('selectHide')
       },
       _addCart() {
         if (!this.select.color) {
@@ -142,13 +142,10 @@
             text: '请选择尺码'
           })
         } else {
-          this.setAlertHint({
-            lsattr: true,
-            text: '成功加入购物车'
-          })
+          this.$emit('addCart', this.select);
         }
       },
-      _addMember() {  // 加入会员
+      _addMember() {  // 立即购买
         if (!this.select.color) {
           this.setAlertHint({     // 弹出提示，2000sm后自动隐藏
             lsattr: true,
@@ -161,14 +158,10 @@
           })
         } else {
           this._selectHide()    // 隐藏掉
-          this.$router.push({
-            path: `/list/detail/${this.path}/submit`
-          })
+          this.$emit('submit')
         }
       },
       ...mapMutations({
-        setSelectSizeColor: 'SET_SELECT_SIZE_COLOR',
-        setSelectSpecification: 'SET_SELECT_SPECIFICATION',
         setAlertHint: 'SET_ALERT_HINT'
       })
     }

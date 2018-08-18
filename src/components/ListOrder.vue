@@ -1,31 +1,29 @@
 <template lang="html">
   <!-- 商品订单和购物车布局 -->
-  <section class="order">
+  <section class="order" v-if="listData.length">
     <div class="content" :class="{'checkbox-wrap': checkbox}">
       <!-- 头部 -->
-      <div class="top">
-        <!-- 选择框，购物车组件才用的到 -->
-        <input type="checkbox" name="c-all" v-model="checkAll" class="checkout-all" v-show="checkbox" :class="{'checked': checkAll}" @click.stop>
+      <div class="top" v-if="isShowTop">
         <p class="top-l">
-          <i class="icon-l"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-dianpu-copy"></use></svg></i><span>初见小店</span>
+          <i class="icon-l"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-dianpu-copy"></use></svg></i><span>{{listData[0].shopSeller}}</span>
         </p>
-        <p class="top-r" @click="_openInfo(1)">
+        <p class="top-r" @click="_openInfo">
           <i class="icon-r"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-icon1"></use></svg></i><span>联系商家</span>
         </p>
       </div>
       <!-- 列表 -->
-      <div class="order-body" v-for="item in data" @click="_openList(0)">
+      <div class="order-body" v-for="(item, index) in listData" :key="index" @click="_openList(item)">
         <!-- 选择框，购物车组件才用的到 -->
-        <input type="checkbox" name="c-all" class="checkout-all" value="id0" v-model="checkAll" v-show="checkbox" :class="{'checked': checkAll}" @click.stop>
+        <input type="checkbox" name="order" class="checkout-all" :value="item.tradeItemId" v-model="checkArr" v-show="checkbox" :class="{'checked': item.checked}" @click.stop>
         <div class="order-img-wrap">
           <img class="loadimg order-img" v-lazy="item.img"/>
         </div>
         <div class="order-text-wrap">
           <p class="order-text">{{item.title}}</p>
           <div class="order-parameter">
-            颜色：<span class="order-pd">{{item.select.color}}</span>
-            尺码：<span class="order-pd">{{item.select.size}}</span>
-            <span class="order-quantity">x{{item.select.value}}</span>
+            颜色：<span class="order-pd">{{item.color}}</span>
+            尺码：<span class="order-pd">{{item.size}}</span>
+            <span class="order-quantity">x{{item.value}}</span>
           </div>
         </div>
         <div class="order-money">
@@ -40,7 +38,7 @@
 <script>
   export default {
     props: {
-      data: {       // 数据
+      listData: {       // 数据
         type: Array,
         default: []
       },
@@ -48,57 +46,65 @@
         type: Boolean,
         default: false
       },
-      toggleAll: {    // 是否全选
-        type: Boolean,
-        default: false
-      },
       click: {
         type: Boolean,    // 是否可以点击打开详细页
         default: true
+      },
+      isShowTop: {    // 是否显示头部
+        type: Boolean,
+        default: false
       }
     },
     data() {
       return {
-        checkAll: false,   // 全选
-        cheack: [],       // 当前选中的
-        checkData: []
+        checkArr: [],     // 当前选中的项
       }
     },
     created() {
-      console.log(this.data)
+      // console.log(this.data)
     },
     methods: {
-      checkOne(id) {    // 当前选中
-        console.log(id)
+      // 选中事件
+      bindChecked(item) {
+        console.log(item)
       },
-      _openInfo(id) {   // 联系商家
-        this.$router.push({
-          path: `/list/detail/${id}/submit/info`
-        })
+      _openInfo() {   // 联系商家
+        this.$emit('clickInfo')
       },
-      _openList(id) {   // 打开列表
+      _openList(item) {   // 打开列表
         if (!this.click) {
           return
         }
-        this.$router.push({
-          path: `/list/detail/${id}`
-        })
+        this.$emit('clickItem', item);
+      },
+      // 全选
+      toggleAll() {
+        let listData = this.listData;
+        let arr = [];
+
+        listData.forEach(item => {
+          arr.push(item.tradeItemId);
+        });
+        this.checkArr = arr;
+      },
+      // 取消全选
+      cancelToggleAll() {
+        this.checkArr = [];
       }
     },
     watch: {
-      toggleAll(newValue) {
-        this.checkAll = newValue
-        // console.log('check:', newValue)
-        // console.log('check.length:', newValue.length)
-        // if (newValue.length === 2) {
-        //   this.checkAll = true
-        // } else {
-        //   this.checkAll = false
-        // }
-      },
-      checkAll(newValue) {
-        console.log(newValue)
-        this.$emit('order-all', newValue)
+      // 选中的商品
+      checkArr(newValue) {
+        let listData = this.listData;
+
+        for (let i in listData) {
+          if (newValue.indexOf(listData[i].tradeItemId) !== -1) {
+            listData[i].checked = true;
+          } else {
+            listData[i].checked = false;
+          }
+        }
+        this.$emit('checkout', newValue);
       }
     }
   }
@@ -204,7 +210,14 @@
       background: url('../common/img/checkbox.png') 0 100% no-repeat;
       background-size: .53rem /* 20/37.5 */;
       border: none;
-      @include extend-click();
+      &:before {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 1.23rem /* 46/37.5 */;
+      }
       &.checked {
         background-position: 0 0;
       }

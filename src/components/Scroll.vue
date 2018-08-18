@@ -21,7 +21,7 @@ export default {
       type: Array,
       default: null
     },
-    listemScroll: {
+    listenScroll: {
       type: Boolean,
       default: false
     },
@@ -52,10 +52,9 @@ export default {
         bounceTime: this.bounceTime
       })
       // 监听scroll滚动事件
-      if (this.listemScroll) {
-        let self = this
+      if (this.listenScroll) {
         this.scroll.on('scroll', (pos) => {
-          self.$emit('scroll', pos)           // 派发事件，输出位置
+          this.$emit('scroll', pos)
         })
       }
     },

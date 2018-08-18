@@ -3,14 +3,19 @@
   <div class="full-fixed list-submit-wrap">
     <section class="full-fixed list-submit _effect" :class="{'_effect-30': decline}">
       <div class="mini-height">
-        <list-order :click="clickNO" :data="listOrderDetail"></list-order>
+        <list-order
+          :click="clickNO"
+          :isShowTop="true"
+          :listData="listOrderDetail"
+          @clickInfo="clickInfo"
+        ></list-order>
         <div class="leave-msg">
           <textarea class="leave-textarea" cols="30" rows="1" placeholder="给商家留言"></textarea>
         </div>
       </div>
       <div class="submit-footer">
         <div class="total">
-          共<span class="total-num">{{selectSpecification.value}}</span>件商品，总金额：<i class="total-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-renminbi"></use></svg></i><span class="total-money">{{total}}</span>
+          共<span class="total-num">{{piece}}</span>件商品，总金额：<i class="total-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-renminbi"></use></svg></i><span class="total-money">{{price}}</span>
         </div>
         <div class="select-btn">
           <p class="waves-effect waves-light deliver" @click="_deliver">快递发货</p>
@@ -51,25 +56,42 @@
     data() {
       return {
         deliverShow: false,     // 打开快递发货地址
-        decline: false
+        decline: false,
+        fullPath: '',     // 完整路径
       }
     },
     created() {
       this.clickNO = false    // 不允许点击打开详细页
+      this.fullPath = this.$route.fullPath;
+      console.log(this.listOrderDetail)
     },
     computed: {
-      listOrderDetail() {   // 把对象变成一个数组，传过去，为的是兼容购物车组件调用
-        let arr = []
-        this.listDetail.select = this.selectSpecification
-        arr.push(this.listDetail)
-        return arr
+      // 一共多少件
+      piece() {
+        let listDetail = this.listOrderDetail;
+        let piece = 0;
+        listDetail.forEach(item => {
+          piece += item.value
+        });
+        return piece;
       },
-      total() {   // 总价
-        return this.selectSpecification.value * this.listDetail.price
+      // 总金额
+      price() {
+        let listDetail = this.listOrderDetail;
+        let price = 0;
+        listDetail.forEach(item => {
+          price += Number(item.price)
+        });
+        return price;
+      },
+      listOrderDetail() {   // 组件接收的是一个数据
+        if (Array.isArray(this.listDetail)) {
+          return this.listDetail
+        }
+        return [this.listDetail]
       },
       ...mapGetters([
         'listDetail',
-        'selectSpecification'
       ])
     },
     methods: {
@@ -80,17 +102,23 @@
       },
       _pickup() {   // 店内提货
         this.$router.replace({
-          path: `/list/detail/1/submit/submitorder`
+          path: `${this.fullPath}/submitorder`
         })
         // 订单提交后，用本地存储保存起来
         this.orderStore()
       },
       orderStore() {
         let order = this.localStorage.get('order') || []     // 先获取，后存储
-        console.log(order)
-        order.push(this.listOrderDetail[0])     // 因为上面已经把他变成一个数组了
-        console.log(order)
-        this.localStorage.set('order', order)
+        this.localStorage.set('order', [...order, ...this.listDetail])
+
+        // 购买成功后清空购物车
+        this.localStorage.remove('shoppingData');
+      },
+      // 联系商家
+      clickInfo() {
+        this.$router.push({
+          path: this.fullPath + '/info'
+        })
       },
       _openLocation() {   // 打开收货地址
         this.$router.push({

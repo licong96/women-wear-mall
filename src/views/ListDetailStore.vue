@@ -5,32 +5,35 @@
     <div class="bg-wrap" ref="bgImg">
       <div class="bg-img" ref="bgImgS"></div>
     </div>
-    <scroll :data="commodity" :probe-type="probeType" :listem-scroll="listemScroll" @scroll="scroll" ref="listview">
-    <!--空div用来装载滚动，不能删掉 -->
-    <div>
-      <!-- 顶部 -->
-      <div class="top">
-        <div class="content flex-center">
-          <div class="img-wrap">
-            <img class="img" src="http://s3.mogucdn.com/p2/161104/upload_8ff8g0d2784ecfg2l042bkc223li2_320x320.jpg" alt="">
-          </div>
-          <h3 class="title">牛牛衣舍</h3>
-          <p class="desc">
-            <span class="sales">销量：958</span>*<span class="collect">收藏：164</span>
-          </p>
-          <div class="btn">
-            <button class="waves-effect waves-button waves-light relation-btn" type="button" @click="_openPageInfo(123)"><i class="icon-daipingjia"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-icon1"></use></svg></i>联系商家</button>
-            <button class="waves-effect waves-button waves-light collect-btn" type="button" @click="_collect">
-              <i class="icon-daipingjia" v-show="!iconCollect"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-shoucang1"></use></svg></i><i class="icon-daipingjia" v-show="iconCollect"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-shoucang"></use></svg></i>收藏商家</button>
+    <scroll :data="commodity" :probe-type="probeType" :listen-scroll="listenScroll" @scroll="scrollPos" ref="listview">
+      <!--空div用来装载滚动，不能删掉 -->
+      <div>
+        <!-- 顶部 -->
+        <div class="top">
+          <div class="content flex-center">
+            <div class="img-wrap">
+              <img class="img" src="http://s3.mogucdn.com/p2/161104/upload_8ff8g0d2784ecfg2l042bkc223li2_320x320.jpg" alt="">
+            </div>
+            <h3 class="title">牛牛衣舍</h3>
+            <p class="desc">
+              <span class="sales">销量：958</span>*<span class="collect">收藏：164</span>
+            </p>
+            <div class="btn">
+              <button class="waves-effect waves-button waves-light relation-btn" type="button" @click="_openPageInfo"><i class="icon-daipingjia"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-icon1"></use></svg></i>联系商家</button>
+              <button class="waves-effect waves-button waves-light collect-btn" type="button" @click="_collect">
+                <i class="icon-daipingjia" v-show="!iconCollect"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-shoucang1"></use></svg></i><i class="icon-daipingjia" v-show="iconCollect"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-shoucang"></use></svg></i>收藏商家</button>
+            </div>
           </div>
         </div>
+        <!-- 列表 -->
+        <section class="commodity">
+          <list-home :data="commodity" @page="openDetail"></list-home>
+        </section>
       </div>
-      <!-- 列表 -->
-      <section class="commodity">
-        <list-home :data="commodity" @page="openDetail"></list-home>
-      </section>
-    </div>
     </scroll>
+    <transition name="transX">
+      <router-view></router-view>
+    </transition>
   </section>
 </template>
 
@@ -53,7 +56,7 @@
     },
     created() {
       this.probeType = 3  // 滚动不截流
-      this.listemScroll = true  // 滚动返回值
+      this.listenScroll = true  // 滚动返回值
       this._getListData()
     },
     mounted() {
@@ -62,8 +65,7 @@
       }, 20)
     },
     methods: {
-      scroll(pos) {   // 监听滚动
-        // console.log(pos.y)
+      scrollPos(pos) {   // 监听滚动
         this.scrollY = pos.y
       },
       openDetail(item) {      // 打开信息页
@@ -92,18 +94,20 @@
       },
       _getListData() {  // 获取首页列表数据
         getList().then((res) => {
-          console.log(res)
           this.commodity = res.result.wall.docs
         })
       },
-      _openPageInfo(id) {
+      // 打开联系商家
+      _openPageInfo() {
+        this.setRouterAnim(true); // 路由动画
         this.$router.push({
-          path: `/list/detail/${id}/info`
+          path: '/store/info'
         })
       },
       ...mapMutations({
         setAlertHint: 'SET_ALERT_HINT',
-        setListDetail: 'SET_LIST_DETAIL'
+        setListDetail: 'SET_LIST_DETAIL',
+        setRouterAnim: 'SET_ROUTER_ANIM'
       })
     },
     watch: {
@@ -115,9 +119,8 @@
           scale = 1 + percent
         } else {
           top = Math.max(-this.imageHeight, -(percent * 180))
-          this.$refs.bgImgS.style[transform] = `translate3d(0, ${top}px, 0)`
         }
-        this.$refs.bgImg.style[transform] = `scale(${scale})`
+        this.$refs.bgImg.style[transform] = `translate3d(0, ${top}px, 0) scale(${scale})`
       }
     },
     components: {

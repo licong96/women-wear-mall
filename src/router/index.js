@@ -1,10 +1,11 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import ListDetail from '@/views/ListDetail'
-import ListDetailComment from '@/views/ListDetailComment'
+import Vue from 'vue';
+import Router from 'vue-router';
+import ListDetail from '@/views/ListDetail';
+import ListDetailComment from '@/views/ListDetailComment';
 // import ListDetailSubmit from '@/views/ListDetailSubmit'
+import ListDetailInfo from '@/views/ListDetailInfo'
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
   routes: [
@@ -22,7 +23,7 @@ export default new Router({
       component: resolve => require(['@/views/List'], resolve),
       children: [
         {
-          path: 'classify/:id',
+          path: 'classify',
           name: 'classify',
           meta: {
             title: '分类',
@@ -34,6 +35,7 @@ export default new Router({
           children: [
             {
               path: 'detail/:id',
+              name: 'classdetail',
               meta: {
                 title: '商品详情',
                 keepAlive: true // 需要被缓存
@@ -47,9 +49,8 @@ export default new Router({
           name: 'listdetail',
           meta: {
             title: '商品详情',
-            keepAlive: true // 不需要被缓存
+            keepAlive: true // 需要被缓存
           },
-          // component: ListDetail,
           components: {
             detail: ListDetail
           },
@@ -59,7 +60,7 @@ export default new Router({
               name: 'Listdetailcomment',
               meta: {
                 title: '更多评论',
-                keepAlive: true // 不需要被缓存
+                keepAlive: true
               },
               component: ListDetailComment
             },
@@ -67,14 +68,15 @@ export default new Router({
               path: 'info',
               meta: {
                 title: '客服',
-                keepAlive: true // 不需要被缓存
+                keepAlive: true
               },
-              component: resolve => require(['@/views/ListDetailInfo'], resolve)
+              component: ListDetailInfo
             },
             {
               path: 'submit',
               name: 'submit',
               meta: {
+                keepAlive: true,
                 title: '确认订单'
               },
               component: resolve => require(['@/views/ListDetailSubmit'], resolve),
@@ -82,14 +84,16 @@ export default new Router({
                 {
                   path: 'info',
                   meta: {
-                    title: '商家'
+                    title: '客服',
+                    keepAlive: true
                   },
-                  component: resolve => require(['@/views/ListDetailInfo'], resolve)
+                  component: ListDetailInfo
                 },
                 {
                   path: 'submitorder',
                   name: 'submitorder',
                   meta: {
+                    keepAlive: true,
                     title: '订单已提交'
                   },
                   component: resolve => require(['@/views/state/Order'], resolve)
@@ -97,15 +101,25 @@ export default new Router({
               ]
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      path: '/store',
+      name: 'store',
+      meta: {
+        title: '店铺',
+        keepAlive: true
+      },
+      component: resolve => require(['@/views/ListDetailStore'], resolve),
+      children: [
         {
-          path: 'store',
+          path: 'info',
           meta: {
-            title: '店铺'
+            title: '客服',
+            keepAlive: true
           },
-          components: {
-            store: resolve => require(['@/views/ListDetailStore'], resolve)
-          }
+          component: ListDetailInfo
         }
       ]
     },

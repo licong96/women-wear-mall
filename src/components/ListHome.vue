@@ -3,7 +3,8 @@
   <section class="list-home">
     <div class="h-list" v-for="item in data" :key="item.itemId" @click="openDetail(item)">
       <div class="img-wrap">
-        <img class="loadimg img" v-lazy="item.img"/>
+        <img class="loadimg img" v-lazy="item.img" v-if="item.img" />
+        <img class="loadimg img" v-lazy="item.showLarge.img" v-else/>
       </div>
       <div class="text">
         <h3 class="text-over title">{{item.title}}</h3>
@@ -39,7 +40,7 @@
         }
         this.refreshTime = setTimeout(() => {
           this.$emit('refresh', true)
-        }, 20)
+        }, 30)
       }
     }
   }

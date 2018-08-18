@@ -2,7 +2,8 @@
   <!-- 轮播图组件 -->
   <swiper :options="swiperOption" :not-next-tick="notNextTick" ref="mySwiper">
     <swiper-slide v-for="(item, index) in swiperData" :key="index">
-      <img class="swiper-img" :src="item.src" alt="">
+      <img class="swiper-img" :src="item.src" alt="" v-if="item.src">
+      <img class="swiper-img" :src="item.image_800" alt="" v-else>
     </swiper-slide>
     <div class="swiper-pagination" slot="pagination"></div>
   </swiper>

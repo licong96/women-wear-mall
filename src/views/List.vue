@@ -1,146 +1,211 @@
-<template lang="html">
+<template lang='html'>
   <!-- 首页 -->
-  <section class="home">
+  <section class='home'>
     <!-- 加载中 -->
-    <transition name="opacity">
-      <loading v-show="!commodity.length"></loading>
+    <transition name='opacity'>
+      <loading v-show='!commodity.length'></loading>
     </transition>
     <!-- 滚动 -->
-    <div class="home _effect">
-      <scroll :data="commodity" ref="listview">
+    <div class='home_effect'>
+      <scroll
+        ref='scroll'
+        :scrollbar="false"
+        :listenScroll="true"
+        :pullDownRefresh="pullDownRefreshObj"
+        :pullUpLoad="pullUpLoadObj"
+        @pullingDown="onPullingDown"
+        @pullingUp="onPullingUp"
+        @scroll="scrollPos"
+      >
         <!--空div用来装载滚动，不能删掉 -->
         <div>
           <!-- 轮播图组件 -->
-          <section class="swiper" ref="swiperEL">
-            <swiper :swiper-data="swiperData" :loop="loop"></swiper>
+          <section class='swiper' ref='swiperEL'>
+            <swiper :swiper-data='swiperData' :loop='loop'></swiper>
           </section>
           <!-- 分类 -->
-          <section class="classify" ref="classifyEL">
-            <ul class="classify-wrap">
-              <li class="classify-list waves-effect" v-for="item in screens" :key="item.fcid" @click="_openClassify(item.fcid)">
-                <i class="classify-i" :style="_classifyBg(item.image)"></i>
-                <p class="classify-p">{{item.title}}</p>
+          <section class='classify' ref='classifyEL'>
+            <ul class='classify-wrap'>
+              <li class='classify-list waves-effect' v-for='(item, index) in screens' :key='index' @click='_openClassify(item)'>
+                <i class='classify-i' :style='_classifyBg(item.image)'></i>
+                <p class='classify-p'>{{item.title}}</p>
               </li>
             </ul>
           </section>
-          <section class="hot-title">
-            <i class="line"></i>
-            <span class="text">热门推荐</span>
-            <i class="line"></i>
+          <section class='hot-title'>
+            <i class='line'></i>
+            <span class='text'>热门推荐</span>
+            <i class='line'></i>
           </section>
           <!-- 商品列表 -->
-          <section class="commodity">
-            <list-home :data="commodity" @page="openDetail" @refresh="refreshs"></list-home>
+          <section class='commodity'>
+            <list-home :data='commodity' @page='openDetail' @refresh='refreshs'></list-home>
           </section>
         </div>
       </scroll>
     </div>
-    <!-- 详细页 -->
-    <transition :name="transition">
-      <router-view name="detail"></router-view>
+    <!-- 回到顶部 -->
+    <transition name="top-in">
+      <div class="back-top" v-show="IsBackTop" @click="onBackTop">
+        <svg class="icon back-top-icon" aria-hidden="true"><use xlink:href="#icon-fanhui"></use></svg></div>
+      </div>
     </transition>
-    <router-view name="store"></router-view>
-    <!-- <transition name="transX">
+    <!-- 详细页 -->
+    <transition :name='transition'>
+      <router-view name='detail'></router-view>
+    </transition>
+    <router-view name='store'></router-view>
+  </section>
+    <!-- <transition name='transX'>
     </transition> -->
     <!-- 店铺 -->
     <!-- <keep-alive>
     </keep-alive> -->
-  </section>
 </template>
 
 <script>
-  import Loading from '@/components/Loading'
-  import Swiper from '@/components/Swiper'
-  import Scroll from '@/components/Scroll'
-  import ListHome from '@/components/ListHome'
-  import {mapMutations, mapGetters} from 'vuex'
-  import {getHome, getList} from '@/api/list'
-  import {getQueryString} from '@/common/js/dom'
+  import Loading from '@/components/Loading';
+  import Swiper from '@/components/Swiper';
+  import Scroll from '@/components/vertical-Scroll'
+  import ListHome from '@/components/ListHome';
+  import { mapMutations, mapGetters } from 'vuex';
+  import { getSlide, getList, search, getClassify } from '@/api/list';
+  import { getQueryString } from '@/common/js/dom';
 
   export default {
     data() {
       return {
-        swiperData: [],  // 轮播图数据
-        screens: [],    // 筛选
-        commodity: []  // 商品
-      }
-    },
-    beforeRouteUpdate(to, from, next) {
-      // 在当前路由改变，但是该组件被复用时调用
-      if (from.name === 'list') {
-      }
-      next()
+        page: 1,
+        swiperData: [], // 轮播图数据
+        screens: [], // 筛选
+        commodity: [], // 商品
+        pullDownRefreshObj: {
+          threshold: 50,
+          stop: 50
+        },
+        pullUpLoadObj: {
+          threshold: 50
+        },
+        IsBackTop: false,
+      };
     },
     created() {
-      this.loop = true    // 轮播图组件是否可以循环
-      this._getHome()
-      this._getList()
+      this.winHeight = window.innerHeight || '667';
+      this.loop = true; // 轮播图组件是否可以循环
+      this._getSlide();
+      this._getClassify();
+      this._getList();
+    },
+    activated() {
+      this.refreshs();
     },
     mounted() {
-      setTimeout(() => {
-      }, 20)
+      setTimeout(() => {}, 20);
     },
     computed: {
       transition() {
-        return this.routerAnim ? 'transX' : ''
+        return this.routerAnim ? 'transX' : '';
       },
-      ...mapGetters([
-        'routerAnim'
-      ])
+      ...mapGetters(['routerAnim'])
     },
     methods: {
-      openDetail(item) {    // 打开详细页
-        this.setRouterAnim(true)      // 路由动画
-        this.$router.push({
-          path: `/list/detail/${item.iid}`
-        })
-        this.setListDetail(item)
+      onPullingDown() {
+        // 模拟更新数据
+        this._getList();
       },
-      _openClassify(id) {   // 打开分类列表页
-        this.setRouterAnim(true)
+      // 下滑加载更多
+      onPullingUp() {
+        this.page++;
+        getList(this.page).then(res => {
+          if (res.success) {
+            this.commodity = [...this.commodity, ...res.result.wall.docs];
+          } else {
+            alert('糟糕，接口出错了！')
+          }
+          this.$refs.scroll.forceUpdate();
+        });
+      },
+      // 监听滚动
+      scrollPos(pos) {
+        // 显示隐藏回到顶部按钮
+        if (-pos.y > this.winHeight) {
+          this.IsBackTop = true
+        } else {
+          this.IsBackTop = false
+        }
+      },
+      // 打开详细页
+      openDetail(item) {
+        this.setRouterAnim(true); // 路由动画
+        this.setListDetail(item);
         this.$router.push({
-          path: `/list/classify/${id}`
-        })
+          path: `/list/detail/${item.tradeItemId}`,
+        });
+      },
+      // 打开分类列表页
+      _openClassify(item) {
+        let query = {
+          fcid: getQueryString(item.link, 'fcid'),
+          acm: getQueryString(item.link, 'acm'),
+        };
+        this.setRouterAnim(true);
+        this.$router.push({
+          path: `/list/classify`,
+          query,
+        });
       },
       destroy(msg) {
-        console.log('list：' + msg)
+        console.log('销毁' + msg);
       },
-      refreshs() {    // 重新计算滑动
-        this.$refs.listview.refresh()
+      refreshs() {
+        // 重新计算滑动
+        this.$refs.scroll.refresh();
       },
-      _getHome() {  // 首页数据
-        getHome().then((res) => {
-          // console.log(res)
-          let swiperScr = res.data[51822].list      // 轮播
-          swiperScr.forEach((item) => {   // 手动添加scr
-            item.src = item.image_800
-            this.swiperData.push(item)
-          })
-          // this.screens = res.data[51836].list      // 筛选
-          let fcidArr = res.data[51836].list
-          fcidArr.forEach((item) => {    // 手动添加 fcid筛选
-            item.fcid = getQueryString(item.link, 'fcid')
-            this.screens.push(item)
-          })
+      // 获取轮播图
+      _getSlide() {
+        getSlide().then(res => {
+          this.swiperData = res.data[122207].list;
+        });
+      },
+      // 获取分类数据
+      _getClassify() {
+        getClassify().then(res => {
+          if (res.success) {
+            this.screens = res.data.list;
+          } else {
+            alert('糟糕，接口出错了！')
+          }
+          this.$refs.scroll.forceUpdate()
         })
       },
-      _getList() {    // 首页列表数据
-        getList().then((res) => {
-          console.log(res)
-          this.commodity = res.result.wall.docs
-        })
+      // 首页列表数据
+      _getList() {
+        getList(this.page).then(res => {
+          if (res.success) {
+            this.commodity = res.result.wall.docs;
+          } else {
+            alert('糟糕，接口出错了！')
+          }
+          this.$refs.scroll.forceUpdate()
+        });
       },
-      _classifyBg(img) {  // 分类背景图片
-        return `background-image: url(${img})`
+      _classifyBg(img) {
+        // 分类背景图片
+        return `background-image: url(${img})`;
       },
-      ...mapMutations({             // 设置
+      // 返回顶部
+      onBackTop() {
+        this.$refs.scroll.scrollTo(0, 0, 300);
+      },
+      // 设置
+      ...mapMutations({
         setListDetail: 'SET_LIST_DETAIL',
         setRouterAnim: 'SET_ROUTER_ANIM'
       })
     },
     watch: {
       routerAnim(newValue) {
-        console.log('页面过渡routerA', newValue)
+        console.log('页面过渡routerA', newValue);
       }
     },
     components: {
@@ -150,7 +215,7 @@
       // CommodityText,
       ListHome
     }
-  }
+  };
 </script>
 
 <style scoped lang="scss">
@@ -158,14 +223,24 @@
   @import "../common/sass/mixin";
 
   .home {
-    height: 100%;
+    overflow: hidden;
+    margin: 0 auto;
+    max-width: 600px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 1.33rem /* 50/37.5 */;
+    left: 0;
     background-color: $color-background-e;
+  }
+  .home_effect {
+    height: 100%;
   }
   // 轮播组件高度
   .swiper {
     overflow: hidden;
     position: relative;
-    height: 4.53rem /* 170/37.5 */;
+    height: 4.8rem /* 180/37.5 */;
   }
   // 分类
   .classify {
@@ -175,10 +250,10 @@
     .classify-wrap {
       display: flex;
       flex-wrap: wrap;
-      padding: .16rem /* 6/37.5 */ 0;
+      padding: 0.16rem /* 6/37.5 */ 0;
       .classify-list {
         width: 25%;
-        padding: .27rem /* 10/37.5 */;
+        padding: 0.27rem /* 10/37.5 */;
         font-size: 0;
         text-align: center;
         .classify-i {
@@ -189,8 +264,8 @@
           background-size: cover;
         }
         .classify-p {
-          margin-top: .13rem /* 5/37.5 */;
-          font-size: .43rem /* 16/37.5 */;
+          margin-top: 0.13rem /* 5/37.5 */;
+          font-size: 0.43rem /* 16/37.5 */;
           color: $color-text-d;
         }
       }
@@ -200,28 +275,45 @@
     display: flex;
     align-items: center;
     width: 80%;
-    margin: .53rem /* 20/37.5 */ auto;
+    margin: 0.53rem /* 20/37.5 */ auto;
     .line {
       flex: 1;
       @include border-b-1px(0);
     }
     .text {
-      padding: 0 .21rem /* 8/37.5 */;
+      padding: 0 0.21rem /* 8/37.5 */;
       font-weight: 700;
-      font-size: .37rem /* 14/37.5 */;
+      font-size: 0.37rem /* 14/37.5 */;
       color: $color-text-6;
     }
   }
-  .commodity {
-    padding-bottom: 1.6rem /* 60/37.5 */;
-  }
+  // .commodity {
+  //   padding-bottom: 1.6rem /* 60/37.5 */;
+  // }
   // 分类筛选过渡
   .classify-enter-active,
   .classify-leave-active {
-    transition: .3s all ease;
+    transition: 0.3s all ease;
   }
   .classify-enter,
   .classify-leave-to {
     transform: translate3d(0, -100%, 0);
+  }
+
+  // 返回顶部
+  .back-top {
+    position: fixed;
+    bottom: 1.47rem /* 55/37.5 */;
+    right: .27rem /* 10/37.5 */;
+    z-index: 4;
+    .back-top-icon {
+      border-radius: 50%;
+      box-shadow: 0 1px 4px 0px $color-theme;
+      padding: .27rem /* 10/37.5 */;
+      font-size: .43rem /* 16/37.5 */;
+      color: #fff;
+      background-color: $color-theme;
+      transform: rotate(90deg);
+    }
   }
 </style>

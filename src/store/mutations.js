@@ -7,14 +7,8 @@ const matutaions = {
   [types.SET_ROUTER_ANIM](state, routerAnim) {
     state.routerAnim = routerAnim
   },
-  [types.SET_SELECT_SIZE_COLOR](state, selectSizeColor) {
-    state.selectSizeColor = selectSizeColor
-  },
   [types.SET_SPECIFICATION_DATA](state, specificationData) {
     state.specificationData = specificationData
-  },
-  [types.SET_SELECT_SPECIFICATION](state, selectSpecification) {
-    state.selectSpecification = selectSpecification
   },
   [types.SET_SWIPER_FULL](state, swiperFull) {
     state.swiperFull = swiperFull
@@ -27,7 +21,7 @@ const matutaions = {
   },
   [types.SET_STATE_ORDER](state, stateOrder) {
     state.stateOrder = stateOrder
-  }
+  },
 }
 
 export default matutaions

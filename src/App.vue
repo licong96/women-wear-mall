@@ -13,8 +13,6 @@
     </div>
     <!-- 底部导航 -->
     <the-nav></the-nav>
-    <!-- 选择商品颜色尺寸 -->
-    <select-size-color v-show="selectSizeColor" :specification-data="specificationData"></select-size-color>
     <!-- 全屏预览一组图片 -->
     <transition name="swiper-opacity">
       <section class="swiper-full" v-show="swiperFull.length" @click="_swiperFullHide">
@@ -30,7 +28,6 @@
 <script>
   // import TheHeader from '@/components/TheHeader'
   import TheNav from '@/components/TheNav'
-  import SelectSizeColor from '@/components/SelectSizeColor'
   import Swiper from '@/components/Swiper'
   import AlertHint from '@/components/AlertHint'
   import {mapGetters, mapMutations} from 'vuex'
@@ -47,8 +44,6 @@
     mounted() {},
     computed: {
       ...mapGetters([
-        'selectSizeColor',
-        'specificationData',
         'swiperFull',
         'swiperFullIndex'
       ])
@@ -66,7 +61,6 @@
     watch: {},
     components: {
       TheNav,
-      SelectSizeColor,
       Swiper,
       AlertHint
     }
