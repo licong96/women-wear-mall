@@ -1,6 +1,6 @@
 # women-wear-mall
 
-> A Vue.js project
+> 用jsonp抓取了蘑菇街的数据来渲染页面，针对在微信上运行，所有没有加头部
 
 ## Build Setup
 
