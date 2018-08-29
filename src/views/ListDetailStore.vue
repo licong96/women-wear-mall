@@ -12,7 +12,7 @@
         <div class="top">
           <div class="content flex-center">
             <div class="img-wrap">
-              <img class="img" src="http://s3.mogucdn.com/p2/161104/upload_8ff8g0d2784ecfg2l042bkc223li2_320x320.jpg" alt="">
+              <img class="img" src="../common/img/store1.jpg" alt="">
             </div>
             <h3 class="title">牛牛衣舍</h3>
             <p class="desc">
@@ -40,7 +40,7 @@
 <script>
   import ListHome from '@/components/ListHome'
   import Scroll from '@/components/Scroll'
-  import {getList} from '@/api/list'
+  import { getList } from '@/api/list';
   import {prefixStyle} from '@/common/js/dom'
   import {mapMutations} from 'vuex'
 
@@ -71,7 +71,7 @@
       openDetail(item) {      // 打开信息页
         this.setListDetail(item)
         this.$router.push({
-          path: `/list/detail/${item.iid}`
+          path: `/list/detail/${item.tradeItemId}`
         })
       },
       refreshs() {    // 重新渲染
@@ -92,10 +92,14 @@
           })
         }
       },
-      _getListData() {  // 获取首页列表数据
-        getList().then((res) => {
-          this.commodity = res.result.wall.docs
-        })
+      _getListData() {
+        getList(1).then(res => {
+          if (res.success) {
+            this.commodity = res.result.wall.docs;
+          } else {
+            alert('糟糕，接口出错了！')
+          }
+        });
       },
       // 打开联系商家
       _openPageInfo() {
@@ -151,7 +155,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: url('http://s10.mogucdn.com/p1/161109/idid_ifrdezrqgu4dezrrmmzdambqmeyde_640x999.png');
+        background: url('../common/img/store.png');
         background-repeat: no-repeat;
         background-size: cover;
         &:after {

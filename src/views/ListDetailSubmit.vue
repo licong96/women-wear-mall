@@ -66,6 +66,9 @@
       console.log(this.listOrderDetail)
     },
     computed: {
+      ...mapGetters([
+        'listDetail',
+      ]),
       // 一共多少件
       piece() {
         let listDetail = this.listOrderDetail;
@@ -90,9 +93,6 @@
         }
         return [this.listDetail]
       },
-      ...mapGetters([
-        'listDetail',
-      ])
     },
     methods: {
       destroy(booleans) {   // 页面过渡

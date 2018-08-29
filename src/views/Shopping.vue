@@ -30,7 +30,6 @@
   import ListOrder from '@/components/ListOrder'
   import Empty from '@/components/Empty'
   import {mapMutations, mapGetters} from 'vuex'
-  import {getList} from '@/api/list'
 
   export default {
     data() {

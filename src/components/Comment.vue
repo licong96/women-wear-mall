@@ -3,7 +3,7 @@
   <div>
     <section class="comment" v-for="(item, itemIndex) in commentData" :key="itemIndex">
       <div class="title">
-        <img class="comment-img" src="https://img30.360buyimg.com/mobile/s60x60_jfs/t493/15/557644423/10532/62d3112/5473e62aNdb4251d8.png" alt="">
+        <img class="comment-img" src="../common/img/user-img.png" alt="">
         <span class="name">{{item.username}}</span>
         <time class="time">{{item.times}}</time>
       </div>

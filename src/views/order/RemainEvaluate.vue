@@ -4,7 +4,7 @@
     <div class="center _effect" :class="{'_effect-50': decline}">
       <div class="top">
         <div class="img-wrap">
-          <img class="top-img" src="https://s3.mogucdn.com/mlcdn/c45406/170915_8cl9k8236821g77fbj1118ac180cf_640x960.jpg" alt="">
+          <img class="top-img" src="../../common/img/comment-2.jpg" alt="">
         </div>
         <div class="grade">
           <p class="grade-text">评分</p>

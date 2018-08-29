@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <div v-wechat-title="$route.meta.title" img-set="http://red.tianshic.com/women-wear-mall/logo.png"></div>
     <!-- 修改微信title -->
     <div v-wechat-title="$route.meta.title"></div>
     <!-- <the-header></the-header> -->

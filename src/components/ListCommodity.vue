@@ -3,7 +3,7 @@
   <div class="wrap">
     <section class="list-comm" @click="_openList(0)">
       <div class="l-c-img-wrap">
-        <img src="https://img11.360buyimg.com/pop/s120x120_jfs/t11017/262/434772985/136198/74d1179f/59f05a92N2f8fb6f2.jpg" class="l-c-img" alt="">
+        <img src="../common/img/list-1.jpg" class="l-c-img" alt="">
       </div>
       <div class="l-c-text">
         <h3 class="l-c-title">女装2017秋季新品双面羊毛呢大衣女中长款外套A400013</h3>

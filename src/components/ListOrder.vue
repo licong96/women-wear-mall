@@ -4,7 +4,7 @@
     <div class="content" :class="{'checkbox-wrap': checkbox}">
       <!-- 头部 -->
       <div class="top" v-if="isShowTop">
-        <p class="top-l">
+        <p class="top-l" v-if="listData[0].shopSeller">
           <i class="icon-l"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-dianpu-copy"></use></svg></i><span>{{listData[0].shopSeller}}</span>
         </p>
         <p class="top-r" @click="_openInfo">

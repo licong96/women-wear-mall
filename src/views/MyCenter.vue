@@ -6,7 +6,7 @@
       <div class="my-head">
         <div class="my-head-wrap">
           <div class="my-img-wrap">
-            <img class="my-img" src="https://img11.360buyimg.com/jdphoto/s120x122_jfs/t5683/191/7076936752/5123/834e5571/596dd62bN7a8affc5.png" alt="">
+            <img class="my-img" src="../common/img/user-pic.png" alt="">
           </div>
           <div class="my-head-text">
             <p class="my-username">开发中...</p>

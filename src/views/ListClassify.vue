@@ -91,6 +91,7 @@
       onBackTop() {
         this.$refs.scroll.scrollTo(0, 0, 300);
       },
+      // 打开信息页
       _openDetail(item) {
         let tradeItemId = item.tradeItemId || item.iid;
 

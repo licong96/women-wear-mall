@@ -53,7 +53,7 @@
         this.transition = 'list-right'    // 改变过渡方向
         this.msgData.push({
           who: 1,
-          src: 'https://s3.mogucdn.com/b7/avatar/160322/b8aob_ie4ginjvmrsdenjxg4zdambqgiyde_560x633.jpg_100x100.jpg',
+          src: '../common/img/user-1.jpg',
           context: this.sendText
         })
         this.sendText = ''    // 清除输入框
