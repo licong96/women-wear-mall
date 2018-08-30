@@ -1,10 +1,11 @@
 <template lang="html">
   <!-- 评价页 -->
   <section class="full-fixed evaluate">
-    <div class="center _effect" :class="{'_effect-50': decline}">
+    <lc-header title="退货" @callBack="back"></lc-header>
+    <div class="center _effect">
       <div class="top">
         <div class="img-wrap">
-          <img class="top-img" src="../../common/img/comment-2.jpg" alt="">
+          <img class="top-img" :src="orderData.img" alt="">
         </div>
         <div class="grade">
           <p class="grade-text">评分</p>
@@ -25,40 +26,52 @@
         </ul>
       </div>
     </div>
-    <div class="waves-effect waves-light btn _effect"  :class="{'_effect-50': decline}" @click="_submit">提交</div>
+    <div class="waves-effect waves-light btn _effect" @click="_submit">提交</div>
     <transition name="transX">
-      <router-view @destroy="destroy"></router-view>
+      <router-view></router-view>
     </transition>
   </section>
 </template>
 
 <script>
+  import LcHeader from '@/components/Header'
+
   export default {
-    beforeRouteEnter (to, from, next) {   // 页面切换效果，进入是 true
-      next(vm => {
-        vm.$emit('destroy', true)
-      })
-    },
-    beforeRouteLeave(to, from, next) {  // 离开是 false
-      this.$emit('destroy', false)
-      next()
-    },
     data() {
       return {
-        decline: false
+        tradeItemId: '',
+        orderData: {},
       }
     },
+    created() {
+      this.tradeItemId = this.$route.query.tradeItemId;
+      this.getOrderData();    // 获取订单数据
+    },
     methods: {
-      destroy(booleans) {   // 页面过渡
-        setTimeout(() => {
-          this.decline = booleans
-        }, 30)
+      // 获取订单数据
+      getOrderData() {
+        let order = this.localStorage.get('order') || [];
+        let tradeItemId = this.tradeItemId;
+
+        for (let i = 0, leng = order.length; i < leng; i++) {
+          if (order[i].tradeItemId === tradeItemId) {
+            this.orderData = order[i];
+            return;
+          }
+        };
       },
       _submit() {
         this.$router.replace({
           path: `/mycenter/orderbox/succeed/evaluate/stateevaluate`
         })
-      }
+      },
+      // 返回
+      back() {
+        this.$router.back();
+      },
+    },
+    components: {
+      LcHeader
     }
   }
 </script>
@@ -117,7 +130,7 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 20%;   // 控制宽度，操作评分
+            width: 80%;   // 控制宽度，操作评分
             height: 100%;
             background: url("../../common/img/star.png") no-repeat;
             background-size: 3.76rem /* 141/37.5 */;

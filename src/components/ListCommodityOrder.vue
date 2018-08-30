@@ -8,7 +8,7 @@
         </span>
         <span class="store">{{item.storeText}}</span>
       </div>
-      <section class="list-comm" @click="_openList(index)">
+      <section class="list-comm">
         <div class="l-c-img-wrap">
           <img :src="item.img" class="l-c-img" alt="">
         </div>
@@ -27,21 +27,19 @@
       </section>
       <!-- 操作按钮 -->
       <div class="l-btn">
-        <button type="button" class="waves-button deliver take" @click="_openPage('return')">退货</button>
-        <button type="button" class="waves-button remain" @click="_openPage('return')">申请售后</button>
+        <button type="button" class="waves-button deliver take" @click="_openPage('return', item)">退货</button>
+        <button type="button" class="waves-button remain" @click="_openPage('return', item)">申请售后</button>
         <!-- <button type="button">提醒发货</button> -->
         <button type="button" class="waves-button">查看物流</button>
-        <button type="button" class="waves-button color-1 take" @click="_openPage('succeed')">确认收货</button>
-        <button type="button" class="waves-button color-1 remain" @click="_openPage('succeed/evaluate')">评价</button>
-        <button type="button" class="waves-button color-1 after" @click="_openPage('return/audit/afterdetails')">退货详情</button>
+        <button type="button" class="waves-button color-1 take" @click="_openPage('succeed', item)">确认收货</button>
+        <button type="button" class="waves-button color-1 remain" @click="_openPage('succeed/evaluate', item)">评价</button>
+        <button type="button" class="waves-button color-1 after" @click="_openPage('return/audit/afterdetails', item)">退货详情</button>
       </div>
     </div>
   </section>
 </template>
 
 <script>
-  import {mapMutations} from 'vuex'
-
   export default {
     props: {
       listData: {
@@ -52,17 +50,13 @@
     computed: {
     },
     methods: {
-      _openList(id) {   // 打开商品详情页
-        this.setRouterAnim(false)
-        this.$router.push({
-          path: `/list/detail/${id}`
-        })
-      },
-      _openPage(path) {   // 打开操作页
-        this.setRouterAnim(true)
+      _openPage(path, item) {   // 打开操作页
         setTimeout(() => {
           this.$router.push({
-            path: `/mycenter/orderbox/${path}`
+            path: `/mycenter/orderbox/${path}`,
+            query: {
+              tradeItemId: item.tradeItemId
+            }
           })
         }, 20)
       },
@@ -76,10 +70,7 @@
         } else if (num === 3) {
           return 'btn-after'
         }
-      },
-      ...mapMutations({
-        setRouterAnim: 'SET_ROUTER_ANIM'
-      })
+      }
     }
   }
 </script>

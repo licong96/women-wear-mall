@@ -18,16 +18,12 @@
       >
         <div>
           <router-view name="main"></router-view>
-          <transition :name="transition">
-          </transition>
         </div>
       </scroll>
     </div>
     <!-- 其他操作路由 -->
     <div class="else">
-      <transition name="transX">
-        <router-view name="else"></router-view>
-      </transition>
+      <router-view name="else"></router-view>
     </div>
   </section>
 </template>

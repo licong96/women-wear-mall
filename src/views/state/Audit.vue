@@ -26,10 +26,14 @@
     },
     data() {
       return {
-        decline: false
+        decline: false,
+        tradeItemId: '',
       }
     },
     computed: {
+    },
+    created() {
+      this.tradeItemId = this.$route.query.tradeItemId;
     },
     methods: {
       destroy(booleans) {   // 页面过渡
@@ -39,7 +43,10 @@
       },
       _openOrder() {
         this.$router.replace({
-          path: `/mycenter/orderbox/return/audit/afterdetails`
+          path: `/mycenter/orderbox/return/audit/afterdetails`,
+          query: {
+            tradeItemId: this.tradeItemId
+          }
         })
       },
       _home() {

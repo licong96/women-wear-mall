@@ -1,8 +1,9 @@
 <template lang="html">
   <!-- 退货 -->
   <section class="full-fixed return">
+    <lc-header title="退货" @callBack="back"></lc-header>
     <div class="main _effect" :class="{'_effect-50': decline}">
-      <list-order></list-order>
+      <list-order :listData="listData"></list-order>
       <div class="select-refund">
         <div class="refund-l" :class="{'active': currentIndex===0}" @click="_refund(0)">
           <h4 class="title">仅退款</h4>
@@ -45,22 +46,37 @@
 
 <script>
   import ListOrder from '@/components/ListOrder'
+  import LcHeader from '@/components/Header'
   import {mapMutations} from 'vuex'
 
   export default {
-    beforeRouteLeave(to, from, next) {    // 离开是 false
-      setTimeout(() => {
-        this.setRouterAnim(false)
-      }, 20)
-      next()
-    },
     data() {
       return {
+        tradeItemId: '',    // 商品ID
         decline: false,
-        currentIndex: 1
+        currentIndex: 1,
+        listData: [],
       }
     },
+    created() {
+      this.tradeItemId = this.$route.query.tradeItemId;
+      this.getOrderData();    // 获取订单数据
+    },
     methods: {
+      // 获取订单数据
+      getOrderData() {
+        let order = this.localStorage.get('order') || [];
+        let tradeItemId = this.tradeItemId;
+        let arr = [];
+
+        for (let i = 0, leng = order.length; i < leng; i++) {
+          if (order[i].tradeItemId === tradeItemId) {
+            arr.push(order[i]);
+            break;
+          }
+        };
+        this.listData = arr;
+      },
       destroy(booleans) {   // 页面过渡
         setTimeout(() => {
           this.decline = booleans
@@ -68,18 +84,26 @@
       },
       _submit() {
         this.$router.replace({
-          path: `/mycenter/orderbox/return/audit`
+          path: `/mycenter/orderbox/return/audit`,
+          query: {
+            tradeItemId: this.tradeItemId
+          }
         })
       },
       _refund(n) {
         this.currentIndex = n
+      },
+      // 返回
+      back() {
+        this.$router.back();
       },
       ...mapMutations({
         setRouterAnim: 'SET_ROUTER_ANIM'
       })
     },
     components: {
-      ListOrder
+      ListOrder,
+      LcHeader
     }
   }
 </script>
@@ -168,7 +192,6 @@
       justify-content: space-between;
       padding: .43rem /* 16/37.5 */;
       @include border-b-1px(0);
-      height: 2.4rem /* 90/37.5 */;
       .title {
         font-size: .43rem /* 16/37.5 */;
         color: $color-text;
@@ -176,6 +199,7 @@
       .textarea {
         flex: 1;
         padding: 0 .32rem /* 12/37.5 */;
+        height: .8rem /* 30/37.5 */;
         font-size: .37rem /* 14/37.5 */;
         color: $color-text;
         line-height: 1.4;
@@ -199,7 +223,6 @@
         flex-wrap: wrap;
         .list {
           margin-right: .43rem /* 16/37.5 */;
-          margin-bottom: .43rem /* 16/37.5 */;
           width: 1.92rem /* 72/37.5 */;
           height: 1.92rem /* 72/37.5 */;
           border: 1px solid rgba(203, 203, 203, .6);

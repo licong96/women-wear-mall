@@ -25,8 +25,12 @@
     },
     data() {
       return {
-        decline: false
+        decline: false,
+        tradeItemId: '',
       }
+    },
+    created() {
+      this.tradeItemId = this.$route.query.tradeItemId;
     },
     computed: {
     },
@@ -38,7 +42,10 @@
       },
       _openOrder() {
         this.$router.replace({
-          path: `/mycenter/orderbox/succeed/evaluate`
+          path: `/mycenter/orderbox/succeed/evaluate`,
+          query: {
+            tradeItemId: this.tradeItemId
+          }
         })
       },
       _home() {
