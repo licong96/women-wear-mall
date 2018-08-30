@@ -4,8 +4,8 @@
     <div class="content" :class="{'checkbox-wrap': checkbox}">
       <!-- 头部 -->
       <div class="top" v-if="isShowTop">
-        <p class="top-l" v-if="listData[0].shopSeller">
-          <i class="icon-l"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-dianpu-copy"></use></svg></i><span>{{listData[0].shopSeller}}</span>
+        <p class="top-l">
+          <i class="icon-l"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-dianpu-copy"></use></svg></i><span>{{listData[0].shopSeller || '品牌女装'}}</span>
         </p>
         <p class="top-r" @click="_openInfo">
           <i class="icon-r"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-icon1"></use></svg></i><span>联系商家</span>
@@ -16,7 +16,8 @@
         <!-- 选择框，购物车组件才用的到 -->
         <input type="checkbox" name="order" class="checkout-all" :value="item.tradeItemId" v-model="checkArr" v-show="checkbox" :class="{'checked': item.checked}" @click.stop>
         <div class="order-img-wrap">
-          <img class="loadimg order-img" v-lazy="item.img"/>
+          <!-- <img class="loadimg order-img" v-lazy="item.img"/> -->
+          <img class="order-img" :src="item.img" alt="">
         </div>
         <div class="order-text-wrap">
           <p class="order-text">{{item.title}}</p>
@@ -27,8 +28,17 @@
           </div>
         </div>
         <div class="order-money">
-          <span class="member"><i class="member-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-renminbi"></use></svg></i>{{item.price}}</span>
-          <s class="original"><i><svg class="icon" aria-hidden="true"><use xlink:href="#icon-renminbi"></use></svg></i>{{item.orgPrice}}</s>
+          <span class="member">
+            <i class="member-icon">
+              <svg class="icon" aria-hidden="true"><use xlink:href="#icon-renminbi"></use></svg>
+            </i>{{item.price}}
+          </span>
+          <s class="original">
+            <i><svg class="icon" aria-hidden="true"><use xlink:href="#icon-renminbi"></use></svg></i>{{item.orgPrice}}
+          </s>
+          <i class="icon__remove" v-if="remove" @click.stop="removeOrder(item)">
+            <svg class="icon" aria-hidden="true"><use xlink:href="#icon-lajixiang"></use></svg>
+          </i>
         </div>
       </div>
     </div>
@@ -53,6 +63,10 @@
       isShowTop: {    // 是否显示头部
         type: Boolean,
         default: false
+      },
+      remove: {     // 是否显示删除图标
+        type: Boolean,
+        default: false
       }
     },
     data() {
@@ -64,10 +78,6 @@
       // console.log(this.data)
     },
     methods: {
-      // 选中事件
-      bindChecked(item) {
-        console.log(item)
-      },
       _openInfo() {   // 联系商家
         this.$emit('clickInfo')
       },
@@ -90,6 +100,10 @@
       // 取消全选
       cancelToggleAll() {
         this.checkArr = [];
+      },
+      // 删除
+      removeOrder(data) {
+        this.$emit('removeOrder', data);
       }
     },
     watch: {
@@ -199,6 +213,20 @@
         .quantity {
           padding-top: .27rem /* 10/37.5 */;
           color: $color-text-6;
+        }
+        .icon__remove {
+          position: relative;
+          margin-top: auto;
+          font-size: .43rem /* 16/37.5 */;
+          color: #999;
+          &::after {
+            content: "";
+            position: absolute;
+            top: -.16rem /* 6/37.5 */;
+            right: -.16rem /* 6/37.5 */;
+            bottom: -.16rem /* 6/37.5 */;
+            left: -.16rem /* 6/37.5 */;
+          }
         }
       }
     }

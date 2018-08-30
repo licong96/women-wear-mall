@@ -9,10 +9,16 @@
       <li class="list" :class="{'active': currentIndex===4}" @click="_openCut('after', 4)">售后</li>
     </ul>
     <div class="main">
-      <scroll ref="scroll">
+      <scroll
+        ref='scroll'
+        :pullDownRefresh="pullDownRefreshObj"
+        :pullUpLoad="pullUpLoadObj"
+        @pullingDown="onPullingDown"
+        @pullingUp="onPullingUp"
+      >
         <div>
+          <router-view name="main"></router-view>
           <transition :name="transition">
-            <router-view name="main" @scrolls="scrolls"></router-view>
           </transition>
         </div>
       </scroll>
@@ -35,7 +41,7 @@
   * state: 2 待评价
   * state: 3 售后
   **/
-  import Scroll from '@/components/Scroll'
+  import Scroll from '@/components/vertical-Scroll'
   import {mapGetters, mapMutations} from 'vuex'
 
   export default {
@@ -54,7 +60,14 @@
     },
     data() {
       return {
-        currentIndex: 0
+        currentIndex: 0,
+        pullDownRefreshObj: {
+          threshold: 50,
+          stop: 50
+        },
+        pullUpLoadObj: {
+          threshold: 50
+        },
       }
     },
     created() {
@@ -69,10 +82,13 @@
       ])
     },
     methods: {
-      scrolls() {
-        setTimeout(() => {
-          this.$refs.scroll.refresh()
-        }, 20)
+      // 模拟更新数据
+      onPullingDown() {
+        this.$refs.scroll.forceUpdate();
+      },
+      // 下滑加载更多
+      onPullingUp() {
+        this.$refs.scroll.forceUpdate();
       },
       _cutActive() {    // 切换当前选中的状态
         const pathName = this.$route.name
@@ -101,8 +117,8 @@
         this.currentIndex = index
         this.$router.replace({
           path: `/mycenter/orderbox/${cut}`
-        })
-        this.scrolls()
+        });
+        this.$refs.scroll.scrollTo(0, 0, 30);
       },
       ...mapMutations({
         'setRouterAnim': 'SET_ROUTER_ANIM'
@@ -141,7 +157,7 @@
     }
     .main {
       position: absolute;
-      top: 1.47rem /* 55/37.5 */;
+      top: 1.2rem /* 45/37.5 */;
       left: 0;
       width: 100%;
       height: 100%;

@@ -1,6 +1,7 @@
 <template lang="html">
   <!-- 客服，消息 -->
   <section class="full-fixed info">
+    <lc-header title="客服" @callBack="back"></lc-header>
     <article class="center" ref="info">
       <transition-group :name="transition" tag="div">
         <div class="msg" :class="{'msg-mine': item.who===1}" v-for="(item, index) in msgData" :key="index">
@@ -23,6 +24,8 @@
 </template>
 
 <script>
+  import LcHeader from '@/components/Header'
+
   export default {
     data() {
       return {
@@ -53,7 +56,7 @@
         this.transition = 'list-right'    // 改变过渡方向
         this.msgData.push({
           who: 1,
-          src: '../common/img/user-1.jpg',
+          src: require('@/common/img/user-1.jpg'),
           context: this.sendText
         })
         this.sendText = ''    // 清除输入框
@@ -74,7 +77,6 @@
       _getMsgData() {  // 获取首页列表数据
         this.axios.get('/api/msg')
           .then((response) => {
-            console.log(response)
             this.msgData = response.data.msg
           })
           .catch((error) => {
@@ -84,7 +86,6 @@
       _getMsgLeftData() {     // 获取对方信息
         this.axios.get('/api/msg')
           .then((response) => {
-            console.log(response)
             let data = response.data.msgLeft
             this.msgData.push({
               who: data.who,
@@ -93,9 +94,14 @@
             })
             this._scrollBottom()
           })
-      }
+      },
+      // 返回
+      back() {
+        this.$router.back();
+      },
     },
     components: {
+      LcHeader
     }
   }
 </script>
@@ -109,7 +115,7 @@
     background-color: #fff;
     .center {
       position: absolute;
-      top: 0;
+      top: 1.2rem /* 45/37.5 */;
       right: 0;
       bottom: 0;
       left: 0;

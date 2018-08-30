@@ -4,7 +4,9 @@
     <transition name="list-header">
       <header class="max-center list-header" v-show="titleShow">
         <div class="top">
-          <i class="iconfont"></i>
+          <i class="iconfont icon-back" @click="back">
+            <svg class="icon" aria-hidden="true"><use xlink:href="#icon-fanhui"></use></svg>
+          </i>
           <div class="head-wrap">
             <!-- 快速导航 -->
             <div>
@@ -13,11 +15,11 @@
               </ul>
             </div>
           </div>
-          <i class="iconfont waves-effect waves-circle" @click="bindOpenShopping">
+          <!-- <i class="iconfont waves-effect waves-circle" @click="bindOpenShopping">
             <svg class="icon" aria-hidden="true">
               <use xlink:href="#icon-gouwuche"></use>
             </svg>
-          </i>
+          </i> -->
         </div>
       </header>
     </transition>
@@ -304,7 +306,7 @@ export default {
         }
       }
       let obj = Object.assign({}, this.selectSpec, listDetail);
-      shoppingData.push(obj);
+      shoppingData.unshift(obj);    // 往前添加
       this.localStorage.set("shoppingData", shoppingData);
 
       this.setAlertHint({
@@ -430,7 +432,7 @@ export default {
         // 评论
         {
           username: "张三",
-          userportrait: "../common/img/user-img.png",
+          userportrait: require("../common/img/user-img.png"),
           times: "2017-10-31",
           start: "5",
           content:
@@ -449,7 +451,7 @@ export default {
         },
         {
           username: "李四",
-          userportrait: "../common/img/user-img.png",
+          userportrait: require("../common/img/user-img.png"),
           times: "2017-10-31",
           start: "4",
           content:
@@ -471,7 +473,7 @@ export default {
         },
         {
           username: "王五",
-          userportrait: "../common/img/user-img.png",
+          userportrait: require("../common/img/user-img.png"),
           times: "2017-10-31",
           start: "3",
           content:
@@ -504,6 +506,10 @@ export default {
       for (let i = 0; i < 3; i++) {
         this.particularsData.push(img);
       }
+    },
+    // 返回
+    back() {
+      this.$router.back();
     },
     ...mapMutations({
       setListDetail: "SET_LIST_DETAIL",
@@ -585,6 +591,9 @@ export default {
       color: $color-text;
       text-align: center;
       line-height: 1.2rem /* 45/37.5 */;
+    }
+    .icon-back {
+      color: $color-theme;
     }
     .head-wrap {
       flex: 1;

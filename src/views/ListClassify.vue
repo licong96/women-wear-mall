@@ -2,6 +2,7 @@
   <!-- 分类列表 -->
   <section class="full-fixed list-classify">
     <!-- <scroll :data="commodity" ref="listview"> -->
+    <lc-header :title="title" @callBack="back"></lc-header>
     <scroll
       ref='scroll'
       :scrollbar="false"
@@ -31,6 +32,7 @@
 <script>
   import ListHome from '@/components/ListHome'
   import Scroll from '@/components/vertical-Scroll'
+  import LcHeader from '@/components/Header'
   import {getListClassify} from '@/api/listClassify'
   import {mapMutations} from 'vuex'
   import {getQueryString} from '@/common/js/dom'
@@ -50,6 +52,7 @@
           threshold: 50
         },
         IsBackTop: false,
+        title: '',
       }
     },
     created() {
@@ -58,6 +61,7 @@
       this.winHeight = window.innerHeight || '667';
       this.fcid = query.fcid;
       this.acm = query.acm;
+      this.title = query.title;
 
       this._getListClassify()   // 分类列表数据
     },
@@ -115,6 +119,10 @@
       refreshs() {    // 重新计算滚动，只执行一次
         this.$refs.listview.refresh()
       },
+      // 返回
+      back() {
+        this.$router.back();
+      },
       ...mapMutations({
         setListDetail: 'SET_LIST_DETAIL',
         setRouterAnim: 'SET_ROUTER_ANIM'
@@ -122,7 +130,8 @@
     },
     components: {
       ListHome,
-      Scroll
+      Scroll,
+      LcHeader
     }
   }
 </script>

@@ -1,7 +1,7 @@
 <template lang="html">
   <!-- 售后 -->
   <section class="after">
-    <list-commodity-order :list-data="afterData"></list-commodity-order>
+    <list-commodity-order :list-data="listData"></list-commodity-order>
   </section>
 </template>
 
@@ -11,7 +11,7 @@
   export default {
     data() {
       return {
-        afterData: []    // 数据
+        listData: []    // 数据
       }
     },
     created() {
@@ -19,15 +19,14 @@
     },
     methods: {
       _getData() {  // 获取首页列表数据
-        this.axios.get('/api/my/order')
-          .then((res) => {
-            console.log(res.data.after)
-            this.afterData = res.data.after
-            this.$emit('scrolls', true)
-          })
-          .catch((error) => {
-            console.log(error)
-          })
+        let order = this.localStorage.get('order') || [];
+        let listData = order.splice(-1, 1);
+
+        listData.forEach(item => {
+          item.store = 3;
+          item.storeText = '正在退货';
+        });
+        this.listData = listData;
       }
     },
     components: {

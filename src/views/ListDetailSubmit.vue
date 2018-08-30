@@ -1,28 +1,31 @@
 <template lang="html">
   <!-- 确认订单 -->
   <div class="full-fixed list-submit-wrap">
-    <section class="full-fixed list-submit _effect" :class="{'_effect-30': decline}">
-      <div class="mini-height">
-        <list-order
-          :click="clickNO"
-          :isShowTop="true"
-          :listData="listOrderDetail"
-          @clickInfo="clickInfo"
-        ></list-order>
-        <div class="leave-msg">
-          <textarea class="leave-textarea" cols="30" rows="1" placeholder="给商家留言"></textarea>
+    <lc-header title="确认订单" @callBack="back"></lc-header>
+    <section class="list-submit _effect" :class="{'_effect-30': decline}">
+      <scroll>
+        <div class="mini-height">
+          <list-order
+            :click="clickNO"
+            :isShowTop="true"
+            :listData="listOrderDetail"
+            @clickInfo="clickInfo"
+          ></list-order>
+          <div class="leave-msg">
+            <textarea class="leave-textarea" cols="30" rows="1" placeholder="给商家留言"></textarea>
+          </div>
         </div>
-      </div>
-      <div class="submit-footer">
-        <div class="total">
-          共<span class="total-num">{{piece}}</span>件商品，总金额：<i class="total-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-renminbi"></use></svg></i><span class="total-money">{{price}}</span>
-        </div>
-        <div class="select-btn">
-          <p class="waves-effect waves-light deliver" @click="_deliver">快递发货</p>
-          <p class="waves-effect waves-light pickup" @click="_pickup">店内提货</p>
-        </div>
-      </div>
+      </scroll>
     </section>
+    <div class="submit-footer">
+      <div class="total">
+        共<span class="total-num">{{piece}}</span>件商品，总金额：<i class="total-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-renminbi"></use></svg></i><span class="total-money">{{price}}</span>
+      </div>
+      <div class="select-btn">
+        <p class="waves-effect waves-light deliver" @click="_deliver">快递发货</p>
+        <p class="waves-effect waves-light pickup" @click="_pickup">店内提货</p>
+      </div>
+    </div>
     <!-- 快递地址 -->
     <transition name="deliver">
       <div class="deliver-wrap" v-show="deliverShow">
@@ -50,6 +53,8 @@
 
 <script>
   import ListOrder from '@/components/ListOrder'
+  import LcHeader from '@/components/Header'
+  import Scroll from '@/components/vertical-Scroll'
   import {mapGetters} from 'vuex'
 
   export default {
@@ -66,9 +71,12 @@
       console.log(this.listOrderDetail)
     },
     computed: {
-      ...mapGetters([
-        'listDetail',
-      ]),
+      listOrderDetail() {   // 组件接收的是一个数据
+        if (Array.isArray(this.listDetail)) {
+          return this.listDetail
+        }
+        return [this.listDetail]
+      },
       // 一共多少件
       piece() {
         let listDetail = this.listOrderDetail;
@@ -87,12 +95,9 @@
         });
         return price;
       },
-      listOrderDetail() {   // 组件接收的是一个数据
-        if (Array.isArray(this.listDetail)) {
-          return this.listDetail
-        }
-        return [this.listDetail]
-      },
+      ...mapGetters([
+        'listDetail',
+      ]),
     },
     methods: {
       destroy(booleans) {   // 页面过渡
@@ -108,11 +113,17 @@
         this.orderStore()
       },
       orderStore() {
-        let order = this.localStorage.get('order') || []     // 先获取，后存储
-        this.localStorage.set('order', [...order, ...this.listDetail])
+        let order = this.localStorage.get('order') || [];     // 先获取，后存储
+        let shoppingData = this.localStorage.get('shoppingData') || [];
+        let listDetail = this.listOrderDetail;
+        let mapList = listDetail.map(item => item.tradeItemId);
+        let newShoppingData = [];
 
-        // 购买成功后清空购物车
-        this.localStorage.remove('shoppingData');
+        this.localStorage.set('order', [ ...listDetail, ...order]);
+
+        // 购买成功后清空对应的商品
+        newShoppingData = shoppingData.filter(item => mapList.indexOf(item.tradeItemId) === -1);
+        this.localStorage.set('shoppingData', newShoppingData);
       },
       // 联系商家
       clickInfo() {
@@ -134,10 +145,16 @@
       },
       _deliver() {    // 快递
         this.deliverShow = true
+      },
+      // 返回
+      back() {
+        this.$router.back();
       }
     },
     components: {
-      ListOrder
+      ListOrder,
+      LcHeader,
+      Scroll
     }
   }
 </script>
@@ -158,6 +175,10 @@
     flex: 1;
   }
   .list-submit {
+    position: absolute;
+    top: 1.2rem /* 45/37.5 */;
+    left: 0;
+    bottom: 2.27rem /* 85/37.5 */;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
@@ -178,8 +199,16 @@
         background-color: #f5f5f5;
         font-size: .37rem /* 14/37.5 */;
         color: $color-text-d;
+        outline: none;
       }
     }
+  }
+  .submit-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
     .total {
       display: flex;
       align-items: center;
@@ -215,9 +244,6 @@
         background-color: $color-theme;
       }
     }
-  }
-  .submit-footer {
-    background-color: #fff;
   }
   // 收货地址
   .deliver-mask {

@@ -1,31 +1,35 @@
 <template lang="html">
   <!-- 商品评论 -->
   <section class="full-fixed de-comment">
-    <scroll :data="commentData" ref="listview">
-    <!-- div是scroll的容器，不能去掉 -->
-    <div>
-      <!-- 综合评分 -->
-      <div class="de-top">
-        <div class="de-top-t">
-          <p class="text">综合评分：</p>
-          <div class="star">
-            <span class="star-light"></span>
+    <lc-header title="更多评论" @callBack="back"></lc-header>
+    <section class="main">
+      <scroll :data="commentData" ref="listview">
+        <!-- div是scroll的容器，不能去掉 -->
+        <div>
+          <!-- 综合评分 -->
+          <div class="de-top">
+            <div class="de-top-t">
+              <p class="text">综合评分：</p>
+              <div class="star">
+                <span class="star-light"></span>
+              </div>
+              <p class="minute">4分</p>
+            </div>
           </div>
-          <p class="minute">4分</p>
+          <!-- 详细评论 -->
+          <div class="de-body">
+            <comments :comment-data="commentData"></comments>
+          </div>
         </div>
-      </div>
-      <!-- 详细评论 -->
-      <div class="de-body">
-        <comments :comment-data="commentData"></comments>
-      </div>
-    </div>
-    </scroll>
+      </scroll>
+    </section>
   </section>
 </template>
 
 <script>
 import Scroll from "@/components/Scroll";
 import Comments from "@/components/Comment";
+import LcHeader from '@/components/Header';
 
 export default {
   data() {
@@ -44,67 +48,71 @@ export default {
         // 评论
         {
           username: "张三",
-          userportrait: "../common/img/user-img.png",
+          userportrait: require("@/common/img/user-img.png"),
           times: "2017-10-31",
           start: "5",
           content:
             "我特意买大一码，看评论说会缩水，关注左很久了，太贵一直没下手，挺舒服的，也很漂亮，是我喜欢的款式",
           minisrc: [
             {
-              src: require("../common/img/comment-1.jpg")
+              src: require("@/common/img/comment-1.jpg")
             },
             {
-              src: require("../common/img/comment-1.jpg")
+              src: require("@/common/img/comment-1.jpg")
             },
             {
-              src: require("../common/img/comment-1.jpg")
+              src: require("@/common/img/comment-1.jpg")
             }
           ]
         },
         {
           username: "李四",
-          userportrait: "../common/img/user-img.png",
+          userportrait: require("@/common/img/user-img.png"),
           times: "2017-10-31",
           start: "4",
           content:
             "我特意买大一码，看评论说会缩水，关注左很久了，太贵一直没下手，挺舒服的，也很漂亮，是我喜欢的款式",
           minisrc: [
             {
-              src: require("../common/img/comment-1.jpg")
+              src: require("@/common/img/comment-1.jpg")
             },
             {
-              src: require("../common/img/comment-1.jpg")
+              src: require("@/common/img/comment-1.jpg")
             },
             {
-              src: require("../common/img/comment-1.jpg")
+              src: require("@/common/img/comment-1.jpg")
             },
             {
-              src: require("../common/img/comment-1.jpg")
+              src: require("@/common/img/comment-1.jpg")
             }
           ]
         },
         {
           username: "王五",
-          userportrait: "../common/img/user-img.png",
+          userportrait: require("@/common/img/user-img.png"),
           times: "2017-10-31",
           start: "3",
           content:
             "我特意买大一码，看评论说会缩水，关注左很久了，太贵一直没下手，挺舒服的，也很漂亮，是我喜欢的款式",
           minisrc: [
             {
-              src: require("../common/img/comment-1.jpg")
+              src: require("@/common/img/comment-1.jpg")
             },
             {
-              src: require("../common/img/comment-1.jpg")
+              src: require("@/common/img/comment-1.jpg")
             }
           ]
         }
       ];
+    },
+    back() {
+      this.$router.back();
     }
   },
   components: {
     Scroll,
-    Comments
+    Comments,
+    LcHeader
   }
 };
 </script>
@@ -113,6 +121,14 @@ export default {
 @import "../common/sass/variable";
 @import "../common/sass/mixin";
 
+.main {
+  position: absolute;
+  top: 1.2rem /* 45/37.5 */;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+}
 .de-comment {
   z-index: 10;
   background: #fff;

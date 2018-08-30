@@ -1,27 +1,27 @@
 <template lang="html">
   <!-- 订单列表 -->
-  <section>
+  <section class="list-order-wrap" v-if="listData.length">
     <div class="list-commodity-order" :class="_cutButton(item.store)" v-for="(item, index) in listData" :key="index">
       <div class="title">
         <span class="title-name">
-          <i class="icon-dianpu"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-dianpu-copy"></use></svg></i>{{item.title.name}}
+          <i class="icon-dianpu"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-dianpu-copy"></use></svg></i>{{item.shopSeller || '品牌女装'}}
         </span>
-        <span class="store">{{item.title.store}}</span>
+        <span class="store">{{item.storeText}}</span>
       </div>
       <section class="list-comm" @click="_openList(index)">
         <div class="l-c-img-wrap">
-          <img :src="item.main.src" class="l-c-img" alt="">
+          <img :src="item.img" class="l-c-img" alt="">
         </div>
         <div class="l-c-text">
-          <h3 class="l-c-title">{{item.main.text}}</h3>
+          <h3 class="l-c-title">{{item.title}}</h3>
           <div class="l-c-spec">
-            <span class="pd-r-10">颜色：{{item.main.color}}</span>
-            <span class="pd-r-10">尺码：{{item.main.size}}</span>
-            <span class="pd-r-10">数量：{{item.main.num}}</span>
+            <span class="pd-r-10">颜色：{{item.color}}</span>
+            <span class="pd-r-10">尺码：{{item.size}}</span>
+            <span class="pd-r-10">数量：{{item.value}}</span>
           </div>
           <div class="l-c-money">
-            <span class="l-c-new"><i class="icon-renminbi"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-renminbi"></use></svg></i>{{item.main.money}}</span>
-            <s class="l-c-old"><i class="icon-renminbi"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-renminbi"></use></svg></i>{{item.main.oldmoney}}</s>
+            <span class="l-c-new"><i class="icon-renminbi"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-renminbi"></use></svg></i>{{item.price}}</span>
+            <s class="l-c-old"><i class="icon-renminbi"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-renminbi"></use></svg></i>{{item.orgPrice}}</s>
           </div>
         </div>
       </section>
@@ -88,8 +88,11 @@
   @import "../common/sass/variable";
   @import "../common/sass/mixin";
 
+  .list-order-wrap {
+    overflow: hidden;
+  }
   .list-commodity-order {
-    margin-bottom: .27rem /* 10/37.5 */;
+    margin: .27rem /* 10/37.5 */ 0;
     background-color: #fff;
     // 头部
     .title {

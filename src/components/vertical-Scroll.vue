@@ -133,7 +133,7 @@
         return this.pullUpDirty ? moreTxt : noMoreTxt
       },
       refreshTxt() {
-        return (this.pullDownRefresh && this.pullDownRefresh.txt) || '加载成功'
+        return (this.pullDownRefresh && this.pullDownRefresh.txt) || '更新成功'
       }
     },
     created() {
@@ -296,7 +296,7 @@
     position: relative;
     height: 100%;
     overflow: hidden;
-    background: #fff;
+    // background: #fff;
     .scroll-content {
       position: relative;
       z-index: 1;
@@ -327,7 +327,7 @@
       margin-top: 10px;
     }
   }
-    
+
 
   .pullup-wrapper {
     width: 100%;

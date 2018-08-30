@@ -1,13 +1,20 @@
 <template lang="html">
   <!-- 购物车 -->
   <section class="shopping">
-    <list-order
-      ref="checkOrder"
-      :listData="shoppingData"
-      :checkbox="checkbox"
-      @clickItem="clickItem"
-      @checkout="checkoutItem"
-    ></list-order>
+    <lc-header title="我的购物车" :back="false" :icon="headerIcon" @callIcon="bindRemove"></lc-header>
+    <div class="shopping-list" v-if="shoppingData.length">
+      <scroll>
+        <list-order
+          ref="checkOrder"
+          :listData="shoppingData"
+          :checkbox="checkbox"
+          :remove="true"
+          @clickItem="clickItem"
+          @checkout="checkoutItem"
+          @removeOrder="removeOrder"
+        ></list-order>
+      </scroll>
+    </div>
     <!-- 结算 -->
     <div class="settle" v-if="shoppingData.length">
       <div class="check-box" @click="_checkAll">
@@ -20,6 +27,7 @@
       <div class="settle-btn" @click="bindOpenSubmit">去结算</div>
     </div>
     <empty :isShow="shoppingData.length === 0" icon="icon-gouwuchexiadan" text="购物车里没东西，去添加吧"></empty>
+    <confirm ref="confirm" text="是否清空购物车？" @confirm="bindConfirm"></confirm>
     <transition name="transX">
       <router-view></router-view>
     </transition>
@@ -29,6 +37,9 @@
 <script>
   import ListOrder from '@/components/ListOrder'
   import Empty from '@/components/Empty'
+  import Scroll from '@/components/vertical-Scroll'
+  import LcHeader from '@/components/Header'
+  import Confirm from '@/components/Confirm'
   import {mapMutations, mapGetters} from 'vuex'
 
   export default {
@@ -44,22 +55,41 @@
       }
     },
     created() {
-    },
-    activated() {
-      // 判断购物车数据是否更改，更改了再更新，否则不更新
-      let newShoppingData = this.localStorage.get('shoppingData') || [];
-      let compare = this.compareArray(this.shoppingData, newShoppingData);
-      if (!compare) {
-        this.shoppingData = this.localStorage.get('shoppingData') || [];
-      }
       console.log(this.shoppingData)
+      this.shoppingData = this.localStorage.get('shoppingData') || [];
     },
     computed: {
+      headerIcon() {
+        return this.shoppingData.length > 0 ? 'icon-lajixiang' : ''
+      }
     },
     mounted() {
       this.checkOrder = this.$refs.checkOrder;
     },
     methods: {
+      // 删除单个商品
+      removeOrder(data) {
+        const tradeItemId = data.tradeItemId;
+        let shoppingData = this.shoppingData;
+        let newArr = [];
+
+        shoppingData.forEach(item => {
+          if (item.tradeItemId !== tradeItemId) {
+            newArr.push(item)
+          }
+        });
+        this.shoppingData = newArr;
+        this.localStorage.set('shoppingData', newArr);
+      },
+      // 是否清空购物车
+      bindRemove() {
+        this.$refs.confirm.show();
+      },
+      // 清空购物车操作
+      bindConfirm() {
+        this.shoppingData = [];
+        this.localStorage.remove('shoppingData');
+      },
       // 去结算
       bindOpenSubmit() {
         if (!this.checkedData.length) {
@@ -95,7 +125,7 @@
             checked.push(item);
           }
         });
-        this.total = total;
+        this.total = total.toFixed(2);
         this.checkConst = value.length;
         value.length === data.length ? this.checkoutAll = true : this.checkoutAll = false;
         this.checkedData = checked;
@@ -126,6 +156,9 @@
     components: {
       ListOrder,
       Empty,
+      Scroll,
+      LcHeader,
+      Confirm,
     }
   }
 </script>
@@ -134,8 +167,13 @@
   @import "../common/sass/variable";
   @import "../common/sass/mixin";
 
-  .shopping {
-    height: 300px;
+  .shopping-list {
+    position: absolute;
+    top: 1.2rem /* 45/37.5 */;
+    right: 0;
+    bottom: 95px;
+    left: 0;
+    z-index: 1;
   }
 
   .settle {
@@ -144,6 +182,7 @@
     align-items: center;
     position: fixed;
     bottom: 1.33rem /* 50/37.5 */;
+    z-index: 2;
     margin: 0 auto;
     max-width: 600px;
     width: 100%;

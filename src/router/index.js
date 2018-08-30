@@ -128,7 +128,7 @@ export default new Router({
       name: 'shopping',
       meta: {
         title: '购物车',
-        keepAlive: true // 需要被缓存
+        keepAlive: false // 需要被缓存
       },
       component: resolve => require(['@/views/Shopping'], resolve)
     },
@@ -195,7 +195,7 @@ export default new Router({
           path: 'orderbox',   // 我的订单
           meta: {
             title: '我的订单',
-            keepAlive: true // 需要被缓存
+            keepAlive: false // 需要被缓存
           },
           component: resolve => require(['@/views/order/OrderBox'], resolve),
           children: [

@@ -1,17 +1,19 @@
 <template lang="html">
   <!-- 全部订单 -->
   <section class="all">
-    <list-commodity-order :list-data="allData"></list-commodity-order>
+    <list-commodity-order :list-data="listData"></list-commodity-order>
+    <empty v-if="listData.length === 0"></empty>
   </section>
 </template>
 
 <script>
   import ListCommodityOrder from '@/components/ListCommodityOrder'
+  import Empty from '@/components/Empty'
 
   export default {
     data() {
       return {
-        allData: []    // 数据
+        listData: []    // 数据
       }
     },
     created() {
@@ -19,19 +21,17 @@
     },
     methods: {
       _getData() {  // 获取首页列表数据
-        this.axios.get('/api/my/order')
-          .then((res) => {
-            console.log(res.data.deliver)
-            this.allData = res.data.all
-            this.$emit('scrolls', true)
-          })
-          .catch((error) => {
-            console.log(error)
-          })
+        let listData = this.localStorage.get('order') || [];
+        listData.forEach(item => {
+          item.store = 0;
+          item.storeText = '待发货';
+        });
+        this.listData = listData;
       }
     },
     components: {
-      ListCommodityOrder
+      ListCommodityOrder,
+      Empty,
     }
   }
 </script>
@@ -41,6 +41,6 @@
   @import "../../common/sass/mixin";
 
   .all {
-    padding-bottom: 1.47rem /* 55/37.5 */;
+    // padding-bottom: 1.47rem /* 55/37.5 */;
   }
 </style>

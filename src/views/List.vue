@@ -5,6 +5,7 @@
     <transition name='opacity'>
       <loading v-show='!commodity.length'></loading>
     </transition>
+    <lc-header title="香菇街" :back="false"></lc-header>
     <!-- 滚动 -->
     <div class='home_effect'>
       <scroll
@@ -26,7 +27,7 @@
           <!-- 分类 -->
           <section class='classify' ref='classifyEL'>
             <ul class='classify-wrap'>
-              <li class='classify-list waves-effect' v-for='(item, index) in screens' :key='index' @click='_openClassify(item)'>
+              <li class='classify-list waves-effect' v-for='(item, index) in screens' :key='index' @click='_openClassify(item, item.title)'>
                 <i class='classify-i' :style='_classifyBg(item.image)'></i>
                 <p class='classify-p'>{{item.title}}</p>
               </li>
@@ -68,6 +69,7 @@
   import Swiper from '@/components/Swiper';
   import Scroll from '@/components/vertical-Scroll'
   import ListHome from '@/components/ListHome';
+  import LcHeader from '@/components/Header'
   import { mapMutations, mapGetters } from 'vuex';
   import { getSlide, getList, search, getClassify } from '@/api/list';
   import { getQueryString } from '@/common/js/dom';
@@ -143,10 +145,11 @@
         });
       },
       // 打开分类列表页
-      _openClassify(item) {
+      _openClassify(item, title) {
         let query = {
           fcid: getQueryString(item.link, 'fcid'),
           acm: getQueryString(item.link, 'acm'),
+          title
         };
         this.setRouterAnim(true);
         this.$router.push({
@@ -205,7 +208,7 @@
     },
     watch: {
       routerAnim(newValue) {
-        console.log('页面过渡routerA', newValue);
+        // console.log('页面过渡routerA', newValue);
       }
     },
     components: {
@@ -213,7 +216,8 @@
       Scroll,
       Swiper,
       // CommodityText,
-      ListHome
+      ListHome,
+      LcHeader
     }
   };
 </script>
@@ -240,7 +244,7 @@
   .swiper {
     overflow: hidden;
     position: relative;
-    height: 4.8rem /* 180/37.5 */;
+    height: 4rem /* 150/37.5 */;
   }
   // 分类
   .classify {
@@ -262,6 +266,7 @@
           height: 1.36rem /* 51/37.5 */;
           background-repeat: no-repeat;
           background-size: cover;
+          background-image: url('../common/img/load.png');
         }
         .classify-p {
           margin-top: 0.13rem /* 5/37.5 */;

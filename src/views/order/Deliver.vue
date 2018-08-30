@@ -1,17 +1,19 @@
 <template lang="html">
   <!-- 待发货 -->
   <section class="deliver">
-    <list-commodity-order :list-data="deliverData"></list-commodity-order>
+    <list-commodity-order :list-data="listData"></list-commodity-order>
+    <empty v-if="listData.length === 0"></empty>
   </section>
 </template>
 
 <script>
   import ListCommodityOrder from '@/components/ListCommodityOrder'
+  import Empty from '@/components/Empty'
 
   export default {
     data() {
       return {
-        deliverData: []    // 数据
+        listData: []    // 数据
       }
     },
     created() {
@@ -19,19 +21,30 @@
     },
     methods: {
       _getData() {  // 获取首页列表数据
-        this.axios.get('/api/my/order')
-          .then((res) => {
-            console.log(res.data.deliver)
-            this.deliverData = res.data.deliver
-            this.$emit('scrolls', true)
-          })
-          .catch((error) => {
-            console.log(error)
-          })
+        let order = this.localStorage.get('order') || [];
+        let listData = order.splice(0, 2);
+
+        listData.forEach(item => {
+          item.store = 0;
+          item.storeText = '待发货';
+        });
+        this.listData = listData;
+        console.log(this.listData)
+
+        // this.axios.get('/api/my/order')
+        //   .then((res) => {
+        //     console.log(res.data.deliver)
+        //     this.listData = res.data.deliver
+        //     this.$emit('scrolls', true)
+        //   })
+        //   .catch((error) => {
+        //     console.log(error)
+        //   })
       }
     },
     components: {
-      ListCommodityOrder
+      ListCommodityOrder,
+      Empty,
     }
   }
 </script>
@@ -41,6 +54,6 @@
   @import "../../common/sass/mixin";
 
   .deliver {
-    padding-bottom: 1.47rem /* 55/37.5 */;
+    // padding-bottom: 1.47rem /* 55/37.5 */;
   }
 </style>
