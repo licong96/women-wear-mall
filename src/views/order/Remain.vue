@@ -1,8 +1,8 @@
 <template lang="html">
   <!-- 待评价 -->
   <section class="remain">
-    <list-commodity-order :list-data="listData"></list-commodity-order>
-    <empty v-if="listData.length === 0"></empty>
+    <list-commodity-order v-if="listData.length > 0" :list-data="listData"></list-commodity-order>
+    <empty :isShow="listData.length === 0" text="暂无待评价订单"></empty>
   </section>
 </template>
 
@@ -19,6 +19,9 @@
     created() {
       this._getData()
     },
+    activated() {
+      this._getData()
+    },
     methods: {
       _getData() {  // 获取首页列表数据
         let order = this.localStorage.get('order') || [];
@@ -29,17 +32,6 @@
           item.storeText = '交易成功';
         });
         this.listData = listData;
-        console.log(this.listData)
-
-        // this.axios.get('/api/my/order')
-        //   .then((res) => {
-        //     console.log(res.data.remain)
-        //     this.listData = res.data.remain
-        //     this.$emit('scrolls', true)
-        //   })
-        //   .catch((error) => {
-        //     console.log(error)
-        //   })
       }
     },
     components: {

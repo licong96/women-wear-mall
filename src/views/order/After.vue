@@ -1,12 +1,14 @@
 <template lang="html">
   <!-- 售后 -->
   <section class="after">
-    <list-commodity-order :list-data="listData"></list-commodity-order>
+    <list-commodity-order v-if="listData.length > 0" :list-data="listData"></list-commodity-order>
+    <empty :isShow="listData.length === 0" text="暂无售后订单"></empty>
   </section>
 </template>
 
 <script>
   import ListCommodityOrder from '@/components/ListCommodityOrder'
+  import Empty from '@/components/Empty'
 
   export default {
     data() {
@@ -15,6 +17,9 @@
       }
     },
     created() {
+      this._getData()
+    },
+    activated() {
       this._getData()
     },
     methods: {
@@ -30,7 +35,8 @@
       }
     },
     components: {
-      ListCommodityOrder
+      ListCommodityOrder,
+      Empty
     }
   }
 </script>

@@ -9,16 +9,8 @@
       <li class="list" :class="{'active': currentIndex===4}" @click="_openCut('after', 4)">售后</li>
     </ul>
     <div class="main">
-      <scroll
-        ref='scroll'
-        :pullDownRefresh="pullDownRefreshObj"
-        :pullUpLoad="pullUpLoadObj"
-        @pullingDown="onPullingDown"
-        @pullingUp="onPullingUp"
-      >
-        <div>
-          <router-view name="main"></router-view>
-        </div>
+      <scroll ref='scroll'>
+        <router-view name="main"></router-view>
       </scroll>
     </div>
     <!-- 其他操作路由 -->
@@ -38,54 +30,19 @@
   * state: 3 售后
   **/
   import Scroll from '@/components/vertical-Scroll'
-  import {mapGetters, mapMutations} from 'vuex'
 
   export default {
-    beforeRouteEnter (to, from, next) {   // 页面切换效果，进入是 true
-      next(vm => {
-        vm._cutActive()
-        vm.$emit('destroy', true)
-      })
-    },
-    beforeRouteLeave(to, from, next) {  // 离开是 false
-      if (to.name === 'submitorder') {    // 如果离开到订单页去，就去掉动画，个人中心进入，动画冲突
-        this.setRouterAnim(false)
-      }
-      this.$emit('destroy', false)
-      next()
-    },
     data() {
       return {
         currentIndex: 0,
-        pullDownRefreshObj: {
-          threshold: 50,
-          stop: 50
-        },
-        pullUpLoadObj: {
-          threshold: 50
-        },
       }
     },
     created() {
       this._cutActive()
     },
     computed: {
-      transition() {
-        return this.routerAnim ? 'transXL' : ''
-      },
-      ...mapGetters([
-        'routerAnim'
-      ])
     },
     methods: {
-      // 模拟更新数据
-      onPullingDown() {
-        this.$refs.scroll.forceUpdate();
-      },
-      // 下滑加载更多
-      onPullingUp() {
-        this.$refs.scroll.forceUpdate();
-      },
       _cutActive() {    // 切换当前选中的状态
         const pathName = this.$route.name
         switch (pathName) {
@@ -109,16 +66,16 @@
         }
       },
       _openCut(cut, index) {    // 切换
-        this.setRouterAnim(false)
         this.currentIndex = index
         this.$router.replace({
           path: `/mycenter/orderbox/${cut}`
         });
-        this.$refs.scroll.scrollTo(0, 0, 30);
+        // this.$refs.scroll.scrollTo(0, 0, 0);
+        // this.$refs.scroll.forceUpdate();
+        setTimeout(() => {
+          this.$refs.scroll.scrollTo(0, 0, 0);
+        }, 30);
       },
-      ...mapMutations({
-        'setRouterAnim': 'SET_ROUTER_ANIM'
-      })
     },
     components: {
       Scroll
@@ -152,11 +109,14 @@
       }
     }
     .main {
+      overflow: hidden;
       position: absolute;
-      top: 1.2rem /* 45/37.5 */;
+      top: 0;
+      right: 0;
+      bottom: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
+      z-index: 1;
+      padding-top: 1.2rem /* 45/37.5 */;
     }
   }
 </style>

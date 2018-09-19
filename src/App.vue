@@ -25,7 +25,6 @@
 </template>
 
 <script>
-  // import TheHeader from '@/components/TheHeader'
   import TheNav from '@/components/TheNav'
   import Swiper from '@/components/Swiper'
   import AlertHint from '@/components/AlertHint'

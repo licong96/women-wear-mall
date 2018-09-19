@@ -85,7 +85,7 @@ html {
 /* 页面过渡 */
 .top-in-enter-active,
 .top-in-leave-active {
-  transition: 0.3s all ease;
+  transition: 0.3s all linear;
 }
 .top-in-enter,
 .top-in-leave-to {
@@ -95,7 +95,7 @@ html {
 
 .transX-enter-active,
 .transX-leave-active {
-  transition: 0.3s all ease;
+  transition: all .3s linear;
 }
 
 .transX-enter,
@@ -105,7 +105,7 @@ html {
 
 .transXL-enter-active,
 .transXL-leave-active {
-  transition: 0.3s all ease;
+  transition: 0.3s all linear;
 }
 
 .transXL-enter,

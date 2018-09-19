@@ -52,7 +52,7 @@
       </div>
     </transition>
     <!-- 详细页 -->
-    <transition :name='transition'>
+    <transition name='transX'>
       <router-view name='detail'></router-view>
     </transition>
     <router-view name='store'></router-view>
@@ -105,10 +105,6 @@
       setTimeout(() => {}, 20);
     },
     computed: {
-      transition() {
-        return this.routerAnim ? 'transX' : '';
-      },
-      ...mapGetters(['routerAnim'])
     },
     methods: {
       onPullingDown() {
@@ -138,7 +134,6 @@
       },
       // 打开详细页
       openDetail(item) {
-        this.setRouterAnim(true); // 路由动画
         this.setListDetail(item);
         this.$router.push({
           path: `/list/detail/${item.tradeItemId}`,
@@ -151,14 +146,10 @@
           acm: getQueryString(item.link, 'acm'),
           title
         };
-        this.setRouterAnim(true);
         this.$router.push({
           path: `/list/classify`,
           query,
         });
-      },
-      destroy(msg) {
-        console.log('销毁' + msg);
       },
       refreshs() {
         // 重新计算滑动
@@ -203,13 +194,7 @@
       // 设置
       ...mapMutations({
         setListDetail: 'SET_LIST_DETAIL',
-        setRouterAnim: 'SET_ROUTER_ANIM'
       })
-    },
-    watch: {
-      routerAnim(newValue) {
-        // console.log('页面过渡routerA', newValue);
-      }
     },
     components: {
       Loading,

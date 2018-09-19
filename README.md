@@ -1,28 +1,16 @@
-# women-wear-mall
+﻿﻿# 香菇街
+----------
+## 演示效果 ##
+地址：[https://licong96.github.io/work/women/#/list][1]
+![效果][2]
 
-> 用jsonp抓取了蘑菇街的数据来渲染页面，针对在微信上运行，所有没有加头部。
+## 介绍 ##
 
-## Build Setup
+> 2017年10月国庆期间用业余时间开发的一个纯前端项目。2018年8月调整了一下接口和一些功能。
+我用jsonp抓取了蘑菇街的数据来渲染页面，可惜，有些数据有签名限制，抓取不到，导致没法继续做下去了。
+过了这么久，现在再来看这个项目，发现了很多当年没有发现的问题，我不准备修复这些问题，这是我成长的一部分，但是我会紧记这些问题，绝不再犯。
 
-``` bash
-# install dependencies
-npm install
 
-# serve with hot reload at localhost:8080
-npm run dev
-
-# build for production with minification
-npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
-
-# run unit tests
-npm run unit
-
-# run e2e tests
-npm run e2e
-
-# run all tests
-npm test
-```
+  [1]: https://licong96.github.io/work/women/#/list
+  [2]: https://licong96.github.io/lib/image/gif/woman.gif
+  [3]: https://licong96.github.io/lib/image/gif/woman.gif

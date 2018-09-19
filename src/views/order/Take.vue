@@ -1,8 +1,8 @@
 <template lang="html">
   <!-- 待收货 -->
   <section class="take">
-    <list-commodity-order :list-data="listData"></list-commodity-order>
-    <empty v-if="listData.length === 0"></empty>
+    <list-commodity-order v-if="listData.length > 0" :list-data="listData"></list-commodity-order>
+    <empty :isShow="listData.length === 0" text="暂无待收货订单"></empty>
   </section>
 </template>
 
@@ -17,6 +17,9 @@
       }
     },
     created() {
+      this._getData()
+    },
+    activated() {
       this._getData()
     },
     methods: {

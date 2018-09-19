@@ -15,7 +15,7 @@
       },
       icon: {
         type: String,
-        default: 'icon-meiyougengduo1'
+        default: 'icon-kong'
       },
       text: {
         type: String,
@@ -32,8 +32,8 @@
     .icon {
       font-size: 100px;
     }
-    .icon-meiyougengduo1 {
-      font-size: 200px;
+    .icon-kong {
+      color: #999;
     }
   }
   .empty-text {
