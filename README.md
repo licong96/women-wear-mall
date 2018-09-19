@@ -1,8 +1,9 @@
-﻿﻿# 香菇街
+﻿# 香菇街 #
 ----------
-## 演示效果 ##
+## 演示地址 ##
 地址：[https://licong96.github.io/work/women/#/list][1]
-![效果][2]
+
+![演示][2]
 
 ## 介绍 ##
 
@@ -13,4 +14,3 @@
 
   [1]: https://licong96.github.io/work/women/#/list
   [2]: https://licong96.github.io/lib/image/gif/woman.gif
-  [3]: https://licong96.github.io/lib/image/gif/woman.gif
