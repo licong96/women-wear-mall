@@ -16,4 +16,4 @@
 
 
   [1]: https://licong96.github.io/work/women/#/list
-  [2]: https://licong96.github.io/lib/image/gif/woman-img.gif
+  [2]: https://licong96.github.io/libs/image/gif/woman-img.gif
